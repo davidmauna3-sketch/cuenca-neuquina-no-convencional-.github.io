@@ -1,242 +1,171 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Cuenca Neuquina No Convencional</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
 
-        body {
-            font-family: 'Segoe UI', Arial, sans-serif;
-            line-height: 1.7;
-            background-color: #f0f2f5;
-            color: #333;
-        }
-
-        /* Menú */
-        nav {
-            background-color: #0f1c27;
-            padding: 0 20px;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-        }
-
-        nav ul {
-            list-style: none;
-            display: flex;
-            justify-content: center;
-        }
-
-        nav ul li {
-            position: relative;
-        }
-
-        nav ul li a {
-            display: block;
-            color: white;
-            text-decoration: none;
-            padding: 18px 28px;
-            font-size: 16px;
-            font-weight: 500;
-            transition: background 0.3s;
-        }
-
-        nav ul li a:hover {
-            background-color: #1e3344;
-        }
-
-        /* Submenú */
-        nav ul li ul {
-            display: none;
-            position: absolute;
-            background-color: #1e3344;
-            min-width: 240px;
-            top: 100%;
-            left: 0;
-            flex-direction: column;
-            box-shadow: 0 6px 12px rgba(0,0,0,0.25);
-        }
-
-        nav ul li:hover > ul {
-            display: flex;
-        }
-
-        nav ul li ul li a {
-            padding: 14px 22px;
-            border-bottom: 1px solid #2c4659;
-            font-size: 15px;
-        }
-
-        nav ul li ul li a:hover {
-            background-color: #2a4a63;
-        }
-
-        /* Header */
-        header {
-            background: linear-gradient(135deg, #0f1c27, #1a3a4a);
-            color: white;
-            text-align: center;
-            padding: 90px 20px 70px;
-        }
-
-        header h1 {
-            font-size: 2.8rem;
-            margin-bottom: 15px;
-            font-weight: 700;
-        }
-
-        header p {
-            font-size: 1.25rem;
-            opacity: 0.9;
-            max-width: 700px;
-            margin: 0 auto;
-        }
-
-        /* Secciones */
-        section {
-            max-width: 920px;
-            margin: 45px auto;
-            padding: 40px;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-        }
-
-        section h2 {
-            color: #0f1c27;
-            font-size: 1.9rem;
-            margin-bottom: 25px;
-            padding-bottom: 12px;
-            border-bottom: 4px solid #2980b9;
-        }
-
-        section h3 {
-            color: #1a3a4a;
-            font-size: 1.4rem;
-            margin: 30px 0 12px 0;
-        }
-
-        section p {
-            margin-bottom: 16px;
-            font-size: 1.05rem;
-        }
-
-        .video-container {
-            position: relative;
-            padding-bottom: 56.25%;
-            height: 0;
-            overflow: hidden;
-            max-width: 100%;
-            margin: 25px 0;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        }
-
-        .video-container iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: 0;
-        }
-
-        footer {
-            text-align: center;
-            padding: 30px;
-            background-color: #0f1c27;
-            color: #ccc;
-            margin-top: 60px;
-            font-size: 0.95rem;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
     <!-- MENÚ -->
+
     <nav>
         <ul>
-            <li><a href="#videos">Videos</a></li>
+
             <li>
-                <a href="#informacion">Información ▾</a>
-                <ul>
-                    <li><a href="#creacion">Creación de la cuenca</a></li>
-                    <li><a href="#extraccion">Sistema de extracción</a></li>
-                    <li><a href="#argentina">Argentina</a></li>
-                </ul>
+                <a href="index.html">Inicio</a>
             </li>
-            <li><a href="#sobre-nosotros">Sobre Nosotros</a></li>
+
+            <li>
+                <a href="videos.html">Videos</a>
+            </li>
+
+            <li>
+
+                <a href="#">Información ▾</a>
+
+                <ul>
+
+                    <li>
+                        <a href="creacion.html">
+                            Creación de la cuenca
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="extraccion.html">
+                            Sistema de extracción
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="argentina.html">
+                            Argentina y Vaca Muerta
+                        </a>
+                    </li>
+
+                </ul>
+
+            </li>
+
+            <li>
+                <a href="sobre-nosotros.html">
+                    Sobre Nosotros
+                </a>
+            </li>
+
         </ul>
     </nav>
 
+
     <!-- ENCABEZADO -->
+
     <header>
-        <h1>Cuenca Neuquina No Convencional</h1>
-        <p>Uno de los mayores reservorios de petróleo y gas de esquisto del mundo</p>
+
+        <h1>
+            Cuenca Neuquina No Convencional
+        </h1>
+
+        <p>
+            La formación Vaca Muerta y el desarrollo de los
+            hidrocarburos no convencionales en Argentina
+        </p>
+
     </header>
 
-    <!-- VIDEOS -->
-    <section id="videos">
-        <h2>Videos</h2>
-        <p>Documental introductorio sobre Vaca Muerta y la explotación no convencional en la Cuenca Neuquina:</p>
-        
-        <div class="video-container">
-            <iframe src="https://www.youtube.com/embed/8QZ_4b0Z0Z0" 
-                    title="Vaca Muerta - Cuenca Neuquina" 
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                    allowfullscreen>
-            </iframe>
+
+    <!-- CONTENIDO -->
+
+    <section>
+
+        <h2>Bienvenidos</h2>
+
+        <p>
+            Este sitio tiene como objetivo brindar información
+            educativa sobre la Cuenca Neuquina y el desarrollo
+            de los hidrocarburos no convencionales en Argentina.
+        </p>
+
+        <p>
+            La Cuenca Neuquina es una de las regiones
+            hidrocarburíferas más importantes de América Latina.
+            Dentro de ella se encuentra la formación Vaca Muerta,
+            reconocida internacionalmente por su potencial de
+            petróleo y gas no convencional.
+        </p>
+
+
+        <div class="contenedor-tarjetas">
+
+            <div class="tarjeta">
+
+                <h3>📚 Información</h3>
+
+                <p>
+                    Conocé cómo se formó la Cuenca Neuquina,
+                    cómo se extraen los hidrocarburos y cuál
+                    es su importancia para Argentina.
+                </p>
+
+                <a href="creacion.html" class="boton">
+                    Ver información
+                </a>
+
+            </div>
+
+
+            <div class="tarjeta">
+
+                <h3>🛢️ Extracción</h3>
+
+                <p>
+                    Descubrí cómo funcionan la perforación
+                    horizontal y la fractura hidráulica.
+                </p>
+
+                <a href="extraccion.html" class="boton">
+                    Ver extracción
+                </a>
+
+            </div>
+
+
+            <div class="tarjeta">
+
+                <h3>🎥 Videos</h3>
+
+                <p>
+                    Mirá contenido audiovisual sobre
+                    Vaca Muerta y la producción energética.
+                </p>
+
+                <a href="videos.html" class="boton">
+                    Ver videos
+                </a>
+
+            </div>
+
         </div>
-        <p><em>(Nota: este es un video de ejemplo. Después lo podemos cambiar por el que vos quieras)</em></p>
+
     </section>
 
-    <!-- INFORMACIÓN -->
-    <section id="informacion">
-        <h2>Información</h2>
 
-        <div id="creacion">
-            <h3>Creación de la cuenca</h3>
-            <p>La Cuenca Neuquina se formó durante el Mesozoico, hace aproximadamente entre 160 y 65 millones de años. Es una cuenca de retroarco ubicada en el centro-oeste de Argentina.</p>
-            <p>Durante millones de años se depositaron sedimentos marinos y continentales que dieron origen a formaciones ricas en materia orgánica, especialmente la formación <strong>Vaca Muerta</strong>, considerada una de las mejores rocas generadoras de hidrocarburos del mundo.</p>
-            <p>Esta formación de esquisto (shale) tiene un espesor que en algunos sectores supera los 400 metros y contiene enormes volúmenes de petróleo y gas no convencional.</p>
-        </div>
-
-        <div id="extraccion">
-            <h3>Sistema de extracción</h3>
-            <p>A diferencia de los yacimientos convencionales, el petróleo y el gas de Vaca Muerta están atrapados en roca de muy baja permeabilidad. Por eso se utiliza la técnica de <strong>fractura hidráulica</strong> (fracking) combinada con <strong>perforación horizontal</strong>.</p>
-            <p>El proceso consiste en:</p>
-            <p>1. Perforar un pozo vertical hasta la formación Vaca Muerta.<br>
-            2. Desviar la perforación en forma horizontal (puede superar los 3.000 metros de largo).<br>
-            3. Inyectar a muy alta presión una mezcla de agua, arena y aditivos para generar fracturas en la roca.<br>
-            4. La arena mantiene abiertas las fracturas permitiendo que el hidrocarburo fluya hacia el pozo.</p>
-            <p>Esta técnica permitió transformar a Vaca Muerta en uno de los desarrollos de shale más importantes del planeta.</p>
-        </div>
-
-        <div id="argentina">
-            <h3>Argentina</h3>
-            <p>La Cuenca Neuquina se extiende principalmente por las provincias de <strong>Neuquén</strong>, Río Negro, Mendoza y La Pampa. Vaca Muerta representa una de las mayores reservas de shale oil y shale gas del mundo.</p>
-            <p>Según estimaciones, posee recursos técnicos recuperables equivalentes a decenas de miles de millones de barriles de petróleo y billones de metros cúbicos de gas. Esto posiciona a Argentina como un actor estratégico en el mercado energético global.</p>
-            <p>Empresas como YPF, Tecpetrol, Pan American Energy, Shell, TotalEnergies y otras operan en la zona. El desarrollo de Vaca Muerta es considerado clave para el autoabastecimiento energético del país y para la generación de divisas a través de la exportación.</p>
-        </div>
-    </section>
-
-    <!-- SOBRE NOSOTROS -->
-    <section id="sobre-nosotros">
-        <h2>Sobre Nosotros</h2>
-        <p>Este sitio tiene como objetivo brindar información clara y accesible sobre la Cuenca Neuquina y el desarrollo de los recursos no convencionales en Argentina.</p>
-        <p>Buscamos acercar conocimiento técnico y contextual a estudiantes, interesados y público general que quiera entender la importancia estratégica de Vaca Muerta.</p>
-    </section>
+    <!-- FOOTER -->
 
     <footer>
-        <p>Cuenca Neuquina No Convencional © 2026 — Página informativa</p>
+
+        <p>
+            Cuenca Neuquina No Convencional
+            · Información educativa · 2026
+        </p>
+
     </footer>
 
 </body>
+
 </html>
