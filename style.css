@@ -90,419 +90,333 @@ nav ul li ul li a:hover {
 
 
 /* =========================================
-   PORTADA PRINCIPAL
+   NUEVA PORTADA CON IMAGEN DE FONDO
 ========================================= */
 
 .portada {
-    min-height: 520px;
+
+    position: relative;
+
+    min-height: 650px;
 
     display: flex;
+
     align-items: center;
+
     justify-content: center;
 
     text-align: center;
 
-    padding: 100px 20px;
+    overflow: hidden;
+
+    background-image:
+        linear-gradient(
+            rgba(5, 15, 22, 0.70),
+            rgba(5, 15, 22, 0.85)
+        ),
+        url("portada.jpg");
+
+    background-size: cover;
+
+    background-position: center;
+
+    background-repeat: no-repeat;
+
+    border-bottom: 7px solid #f28c28;
+
+}
+
+
+/* CAPA OSCURA */
+
+.oscurecer {
+
+    position: absolute;
+
+    top: 0;
+
+    left: 0;
+
+    width: 100%;
+
+    height: 100%;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(5, 15, 22, 0.85),
+            rgba(5, 15, 22, 0.35),
+            rgba(5, 15, 22, 0.85)
+        );
+
+    z-index: 1;
+
+}
+
+
+/* CONTENIDO */
+
+.portada-contenido {
+
+    position: relative;
+
+    z-index: 2;
+
+    max-width: 1000px;
+
+    padding: 50px 20px;
+
+}
+
+
+/* INSIGNIA SUPERIOR */
+
+.insignia {
+
+    display: inline-block;
+
+    background-color: rgba(242, 140, 40, 0.90);
 
     color: white;
 
-    background:
-        radial-gradient(
-            circle at top right,
-            rgba(230, 126, 34, 0.45),
-            transparent 35%
-        ),
-        linear-gradient(
-            135deg,
-            #09131c 0%,
-            #142b3b 50%,
-            #263f4c 100%
-        );
+    padding: 8px 20px;
 
-    border-bottom: 7px solid #e67e22;
-}
+    border-radius: 30px;
 
-.portada-contenido {
-    max-width: 950px;
-}
+    font-size: 0.85rem;
 
-.icono-portada {
-    font-size: 4.5rem;
-    margin-bottom: 10px;
-}
-
-.titulo-superior {
-    color: #f39c12;
-    font-size: 0.9rem;
     font-weight: bold;
-    letter-spacing: 4px;
-    margin-bottom: 15px;
+
+    letter-spacing: 2px;
+
+    margin-bottom: 25px;
+
+    box-shadow:
+        0 5px 20px
+        rgba(0,0,0,0.35);
+
 }
+
+
+/* TÍTULO PRINCIPAL */
 
 .portada h1 {
-    font-size: 4rem;
-    line-height: 1.15;
+
+    color: white;
+
+    font-size: 4.5rem;
+
+    line-height: 1.05;
+
+    font-weight: 900;
+
+    letter-spacing: 2px;
+
     margin-bottom: 20px;
-    font-weight: 800;
-    text-transform: uppercase;
-    text-shadow: 3px 3px 10px rgba(0,0,0,0.4);
+
+    text-shadow:
+        3px 4px 15px
+        rgba(0,0,0,0.75);
+
 }
+
+
+/* SEGUNDA PARTE DEL TÍTULO */
 
 .portada h1 span {
+
     display: block;
-    color: #f39c12;
+
+    color: #f28c28;
+
+    margin-top: 10px;
+
 }
 
-.linea-naranja {
-    width: 100px;
+
+/* LÍNEA NARANJA */
+
+.linea-portada {
+
+    width: 130px;
+
     height: 5px;
-    background-color: #e67e22;
-    margin: 20px auto;
-    border-radius: 10px;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            #f28c28,
+            transparent
+        );
+
+    margin: 25px auto;
+
 }
+
+
+/* DESCRIPCIÓN */
 
 .descripcion-portada {
+
+    color: #f1f1f1;
+
+    font-size: 1.3rem;
+
+    line-height: 1.7;
+
     max-width: 750px;
-    margin: 20px auto;
 
-    font-size: 1.25rem;
+    margin:
+        0 auto
+        35px;
 
-    color: #e8e8e8;
+    text-shadow:
+        2px 2px 8px
+        rgba(0,0,0,0.70);
+
 }
 
 
-/* =========================================
-   BOTÓN DE PORTADA
-========================================= */
+/* DATOS DE LA PORTADA */
+
+.datos-portada {
+
+    display: flex;
+
+    justify-content: center;
+
+    gap: 20px;
+
+    flex-wrap: wrap;
+
+    margin-bottom: 40px;
+
+}
+
+
+/* CADA DATO */
+
+.dato {
+
+    width: 150px;
+
+    padding: 15px;
+
+    background-color:
+        rgba(10, 25, 35, 0.65);
+
+    border:
+        1px solid
+        rgba(255,255,255,0.20);
+
+    border-radius: 10px;
+
+    backdrop-filter:
+        blur(5px);
+
+    transition:
+        0.3s;
+
+}
+
+
+/* EFECTO AL PASAR EL MOUSE */
+
+.dato:hover {
+
+    transform:
+        translateY(-5px);
+
+    background-color:
+        rgba(242, 140, 40, 0.80);
+
+}
+
+
+/* ICONO */
+
+.dato strong {
+
+    display: block;
+
+    font-size: 1.8rem;
+
+    margin-bottom: 5px;
+
+}
+
+
+/* TEXTO */
+
+.dato span {
+
+    color: white;
+
+    font-size: 0.9rem;
+
+    font-weight: bold;
+
+}
+
+
+/* BOTÓN PRINCIPAL */
 
 .boton-portada {
-    display: inline-block;
 
-    margin-top: 20px;
+    display: inline-flex;
 
-    padding: 15px 32px;
+    align-items: center;
 
-    background-color: #e67e22;
+    gap: 15px;
+
+    background-color: #f28c28;
 
     color: white;
 
     text-decoration: none;
 
-    font-weight: bold;
+    padding:
+        16px 30px;
 
-    border-radius: 6px;
-
-    transition: all 0.3s ease;
-
-    box-shadow: 0 5px 18px rgba(0,0,0,0.35);
-}
-
-.boton-portada:hover {
-    background-color: #f39c12;
-
-    transform: translateY(-3px);
-
-    box-shadow: 0 8px 25px rgba(0,0,0,0.45);
-}
-
-
-/* =========================================
-   SECCIONES GENERALES
-========================================= */
-
-section {
-    max-width: 1050px;
-
-    margin: 45px auto;
-
-    padding: 45px;
-
-    background: white;
-
-    border-radius: 12px;
-
-    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-}
-
-section h2 {
-    color: #122331;
-
-    margin-bottom: 25px;
-
-    padding-bottom: 12px;
-
-    border-bottom: 4px solid #e67e22;
-
-    font-size: 2rem;
-}
-
-section h3 {
-    color: #1e3a4f;
-
-    margin: 25px 0 12px;
-
-    font-size: 1.35rem;
-}
-
-section p {
-    margin-bottom: 17px;
-
-    font-size: 1.05rem;
-}
-
-section ul {
-    margin: 15px 0 20px 25px;
-}
-
-
-/* =========================================
-   ETIQUETA
-========================================= */
-
-.etiqueta {
-    display: inline-block;
-
-    background-color: #fff1e6;
-
-    color: #d35400;
-
-    padding: 6px 14px;
-
-    border-radius: 20px;
-
-    font-size: 0.8rem;
+    border-radius: 5px;
 
     font-weight: bold;
 
     letter-spacing: 1px;
 
-    margin-bottom: 15px;
-}
-
-
-/* =========================================
-   TARJETAS
-========================================= */
-
-.contenedor-tarjetas {
-    display: flex;
-
-    flex-wrap: wrap;
-
-    gap: 25px;
-
-    margin-top: 35px;
-}
-
-.tarjeta {
-    flex: 1;
-
-    min-width: 250px;
-
-    background: #f8fafb;
-
-    padding: 30px;
-
-    border-radius: 12px;
-
-    border-top: 5px solid #e67e22;
-
-    box-shadow: 0 4px 15px rgba(0,0,0,0.06);
-
-    transition: all 0.3s ease;
-}
-
-.tarjeta:hover {
-    transform: translateY(-7px);
-
-    box-shadow: 0 10px 25px rgba(0,0,0,0.12);
-}
-
-.icono-tarjeta {
-    font-size: 2.5rem;
-
-    margin-bottom: 10px;
-}
-
-.tarjeta h3 {
-    margin-top: 0;
-
-    color: #142b3b;
-}
-
-
-/* =========================================
-   BOTONES GENERALES
-========================================= */
-
-.boton {
-    display: inline-block;
-
-    background-color: #142b3b;
-
-    color: white;
-
-    text-decoration: none;
-
-    padding: 11px 20px;
-
-    border-radius: 6px;
-
-    margin-top: 10px;
-
-    font-weight: 600;
-
-    transition: all 0.3s ease;
-}
-
-.boton:hover {
-    background-color: #e67e22;
-
-    transform: translateY(-2px);
-}
-
-
-/* =========================================
-   SECCIÓN DESTACADA
-========================================= */
-
-.destacado {
-    max-width: 1050px;
-
-    background:
-        linear-gradient(
-            135deg,
-            #142b3b,
-            #243f50
-        );
-
-    color: white;
-
-    display: flex;
-
-    justify-content: space-between;
-
-    align-items: center;
-
-    gap: 30px;
-
-    border-left: 7px solid #e67e22;
-}
-
-.destacado h2 {
-    color: white;
-
-    border-bottom: none;
-
-    margin-bottom: 10px;
-
-    padding-bottom: 0;
-}
-
-.destacado p {
-    color: #dce5ea;
-
-    margin-bottom: 0;
-}
-
-.boton-claro {
-    display: inline-block;
-
-    background-color: #e67e22;
-
-    color: white;
-
-    text-decoration: none;
-
-    padding: 13px 22px;
-
-    border-radius: 6px;
-
-    font-weight: bold;
-
-    white-space: nowrap;
-
-    transition: all 0.3s ease;
-}
-
-.boton-claro:hover {
-    background-color: #f39c12;
-
-    transform: translateY(-2px);
-}
-
-
-/* =========================================
-   VIDEOS
-========================================= */
-
-.video-container {
-    position: relative;
-
-    padding-bottom: 56.25%;
-
-    height: 0;
-
-    overflow: hidden;
-
-    max-width: 100%;
-
-    margin: 25px 0;
-
-    border-radius: 10px;
-
-    box-shadow: 0 5px 20px rgba(0,0,0,0.15);
-}
-
-.video-container iframe {
-    position: absolute;
-
-    top: 0;
-    left: 0;
-
-    width: 100%;
-    height: 100%;
-
-    border: 0;
-}
-
-
-/* =========================================
-   PIE DE PÁGINA
-========================================= */
-
-footer {
-    text-align: center;
-
-    padding: 40px 20px;
-
-    background-color: #0b1720;
-
-    color: white;
-
-    margin-top: 60px;
-}
-
-footer p:first-child {
-    font-size: 1.15rem;
-
-    font-weight: bold;
-
-    margin-bottom: 8px;
-}
-
-.footer-texto {
-    color: #b8c4cc;
-
     font-size: 0.95rem;
 
-    margin-bottom: 8px;
+    transition:
+        all 0.3s ease;
+
+    box-shadow:
+        0 8px 25px
+        rgba(0,0,0,0.40);
+
 }
 
-.footer-anio {
-    color: #e67e22;
 
-    font-size: 0.9rem;
+/* EFECTO DEL BOTÓN */
+
+.boton-portada:hover {
+
+    background-color: #ff9f43;
+
+    transform:
+        translateY(-4px);
+
+    box-shadow:
+        0 12px 30px
+        rgba(0,0,0,0.55);
+
+}
+
+
+.boton-portada span {
+
+    font-size: 1.3rem;
+
 }
 
 
@@ -510,70 +424,66 @@ footer p:first-child {
    DISEÑO PARA CELULAR
 ========================================= */
 
-@media (max-width: 700px) {
-
-    nav {
-        padding: 0 5px;
-    }
-
-    nav ul {
-        flex-wrap: wrap;
-
-        justify-content: center;
-    }
-
-    nav ul li a {
-        padding: 12px 13px;
-
-        font-size: 13px;
-    }
-
-    nav ul li ul {
-        min-width: 220px;
-    }
+@media
+(max-width: 700px) {
 
     .portada {
-        min-height: 500px;
 
-        padding: 70px 20px;
+        min-height: 600px;
+
     }
+
 
     .portada h1 {
-        font-size: 2.3rem;
+
+        font-size: 2.6rem;
+
     }
 
-    .titulo-superior {
-        font-size: 0.7rem;
-
-        letter-spacing: 2px;
-    }
 
     .descripcion-portada {
+
         font-size: 1.05rem;
+
     }
 
-    .icono-portada {
-        font-size: 3.5rem;
+
+    .datos-portada {
+
+        gap: 10px;
+
     }
 
-    section {
-        margin: 25px 15px;
 
-        padding: 25px;
+    .dato {
+
+        width: 110px;
+
+        padding: 12px 5px;
+
     }
 
-    section h2 {
-        font-size: 1.6rem;
+
+    .dato strong {
+
+        font-size: 1.5rem;
+
     }
 
-    .contenedor-tarjetas {
-        flex-direction: column;
+
+    .dato span {
+
+        font-size: 0.75rem;
+
     }
 
-    .destacado {
-        flex-direction: column;
 
-        align-items: flex-start;
+    .insignia {
+
+        font-size: 0.7rem;
+
+        letter-spacing: 1px;
+
     }
 
 }
