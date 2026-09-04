@@ -288,13 +288,14 @@ nav a:hover{
 }
 
 /* =========================================================
-   MAPA INTERACTIVO PROFESIONAL (ESTILOS CUSTOM)
+   MAPA INTERACTIVO PROFESIONAL (AJUSTE PARA EVITAR FONDO NEGRO)
    ========================================================= */
 
 .map-card{
   height:480px;
+  min-height:480px;
   border-radius:24px;
-  background:#0d0d14;
+  background:#12111a;
   border:1px solid #2a2635;
   position:relative;
   overflow:hidden;
@@ -317,8 +318,9 @@ nav a:hover{
 #mapa-cuenca{
   width:100%;
   height:100%;
+  min-height:480px;
   z-index:1;
-  background:#09090e;
+  background:#14131d;
 }
 
 .map-controls{
@@ -1157,8 +1159,9 @@ body.loaded #loader{
     padding:80px 6%;
   }
 
-  .map-card{
+  .map-card, #mapa-cuenca{
     height:420px;
+    min-height:420px;
   }
 
   .facts,
