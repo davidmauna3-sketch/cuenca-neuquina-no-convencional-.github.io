@@ -1,931 +1,480 @@
-/* =========================================================
-   MENÚ MOBILE
-========================================================= */
+document.addEventListener("DOMContentLoaded", () => {
 
-const menuToggle = document.getElementById("menuToggle");
-const mainMenu = document.getElementById("mainMenu");
+  /* =========================
+     LOADER
+  ========================= */
 
-menuToggle.addEventListener("click", () => {
+  setTimeout(() => {
+    document.body.classList.add("loaded");
+  }, 500);
 
-    mainMenu.classList.toggle("open");
 
-});
+  /* =========================
+     MENÚ CELULAR
+  ========================= */
 
+  const nav = document.getElementById("nav");
+  const menu = document.getElementById("menuBtn");
 
-document.querySelectorAll("#mainMenu a").forEach(link => {
+  menu.onclick = () => {
+    nav.classList.toggle("open");
+  };
 
-    link.addEventListener("click", () => {
+  document.querySelectorAll("nav a").forEach(link => {
 
-        mainMenu.classList.remove("open");
+    link.onclick = () => {
+      nav.classList.remove("open");
+    };
 
-    });
+  });
 
-});
 
+  /* =========================
+     MODO STAND
+  ========================= */
 
+  const standBtn = document.getElementById("standBtn");
 
-/* =========================================================
-   MAPA INTERACTIVO
-========================================================= */
+  standBtn.onclick = () => {
 
-const map = L.map("map").setView(
-    [-38.5, -69.5],
-    7
-);
+    document.body.classList.toggle("stand-mode");
 
-
-L.tileLayer(
-    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-    {
-        attribution:
-            '&copy; OpenStreetMap contributors'
-    }
-).addTo(map);
-
-
-/* Marcador Neuquén */
-
-const neuquen = L.marker(
-    [-38.9516, -68.0591]
-).addTo(map);
-
-neuquen.bindPopup(`
-    <strong>Neuquén Capital</strong>
-    <br>
-    Centro administrativo de la provincia.
-`);
-
-
-/* Añelo */
-
-const anelo = L.marker(
-    [-38.355, -68.788]
-).addTo(map);
-
-anelo.bindPopup(`
-    <strong>Añelo</strong>
-    <br>
-    Localidad estratégica vinculada al desarrollo
-    hidrocarburífero de Vaca Muerta.
-`);
-
-
-/* Área educativa aproximada de Vaca Muerta */
-
-const vacaMuerta = L.circle(
-    [-38.3, -69.2],
-    {
-        radius: 85000,
-        color: "#9c4dcc",
-        fillColor: "#7026a8",
-        fillOpacity: 0.18,
-        weight: 2
-    }
-).addTo(map);
-
-vacaMuerta.bindPopup(`
-    <strong>Área de referencia de Vaca Muerta</strong>
-    <br>
-    Representación educativa aproximada.
-`);
-
-
-/* Marcador Mendoza */
-
-const mendoza = L.marker(
-    [-35.675, -69.58]
-).addTo(map);
-
-mendoza.bindPopup(`
-    <strong>Sectores mendocinos</strong>
-    <br>
-    La Cuenca Neuquina también se extiende
-    hacia sectores de Mendoza.
-`);
-
-
-/* Reset mapa */
-
-document.getElementById("resetMap")
-    .addEventListener("click", () => {
-
-        map.setView(
-            [-38.5, -69.5],
-            7
-        );
-
-    });
-
-
-
-/* =========================================================
-   TABS DEL PROCESO
-========================================================= */
-
-const processTabs =
-    document.querySelectorAll(".process-tab");
-
-const processPanels =
-    document.querySelectorAll(".process-panel");
-
-
-processTabs.forEach(tab => {
-
-    tab.addEventListener("click", () => {
-
-        processTabs.forEach(t =>
-            t.classList.remove("active")
-        );
-
-        processPanels.forEach(panel =>
-            panel.classList.remove("active")
-        );
-
-
-        tab.classList.add("active");
-
-        const target =
-            document.getElementById(
-                tab.dataset.process
-            );
-
-        target.classList.add("active");
-
-    });
-
-});
-
-
-
-/* =========================================================
-   ANIMACIONES AL HACER SCROLL
-========================================================= */
-
-const observer =
-    new IntersectionObserver(
-        entries => {
-
-            entries.forEach(entry => {
-
-                if (entry.isIntersecting) {
-
-                    entry.target.classList.add(
-                        "visible"
-                    );
-
-                }
-
-            });
-
-        },
-        {
-            threshold: 0.12
-        }
-    );
-
-
-document.querySelectorAll(".reveal")
-    .forEach(element => {
-
-        observer.observe(element);
-
-    });
-
-
-
-/* =========================================================
-   CONTADORES
-========================================================= */
-
-let countersStarted = false;
-
-
-const numbersSection =
-    document.querySelector(".numbers-section");
-
-
-const counterObserver =
-    new IntersectionObserver(
-        entries => {
-
-            if (
-                entries[0].isIntersecting &&
-                !countersStarted
-            ) {
-
-                countersStarted = true;
-
-                document
-                    .querySelectorAll("[data-count]")
-                    .forEach(counter => {
-
-                        const target =
-                            Number(
-                                counter.dataset.count
-                            );
-
-                        let current = 0;
-
-                        const duration = 1300;
-
-                        const start =
-                            performance.now();
-
-
-                        function update(time) {
-
-                            const progress =
-                                Math.min(
-                                    (time - start) /
-                                    duration,
-                                    1
-                                );
-
-                            current =
-                                Math.floor(
-                                    progress * target
-                                );
-
-                            counter.textContent =
-                                current;
-
-                            if (progress < 1) {
-
-                                requestAnimationFrame(
-                                    update
-                                );
-
-                            } else {
-
-                                counter.textContent =
-                                    target + "+";
-
-                            }
-
-                        }
-
-                        requestAnimationFrame(update);
-
-                    });
-
-            }
-
-        }
-    );
-
-
-counterObserver.observe(numbersSection);
-
-
-
-/* =========================================================
-   LABORATORIO
-========================================================= */
-
-const labButtons =
-    document.querySelectorAll(".lab-button");
-
-const labResult =
-    document.getElementById("labResult");
-
-
-const labData = {
-
-    organica: `
-        <strong>Materia orgánica</strong>
-        <br><br>
-        La materia orgánica preservada en los sedimentos
-        es fundamental para la generación de hidrocarburos.
-        Su transformación térmica durante el enterramiento
-        geológico puede generar petróleo y gas.
-    `,
-
-    porosidad: `
-        <strong>Porosidad</strong>
-        <br><br>
-        Representa el espacio disponible dentro de la roca
-        donde pueden encontrarse fluidos. En rocas
-        no convencionales, estos espacios pueden ser muy
-        pequeños.
-    `,
-
-    permeabilidad: `
-        <strong>Permeabilidad</strong>
-        <br><br>
-        Indica la capacidad de la roca para permitir el
-        movimiento de fluidos. La baja permeabilidad es una
-        de las características que hace necesaria la
-        estimulación hidráulica en muchos desarrollos
-        no convencionales.
-    `
-
-};
-
-
-labButtons.forEach(button => {
-
-    button.addEventListener("click", () => {
-
-        const key =
-            button.dataset.lab;
-
-        labResult.innerHTML =
-            labData[key];
-
-    });
-
-});
-
-
-
-/* =========================================================
-   QUIZ
-========================================================= */
-
-const questions = [
-
-    {
-        question:
-            "¿En qué región de Argentina se encuentra principalmente la Cuenca Neuquina?",
-
-        answers: [
-            "Centro-oeste",
-            "Noreste",
-            "Extremo sur",
-            "Región pampeana exclusivamente"
-        ],
-
-        correct: 0
-    },
-
-
-    {
-        question:
-            "¿Qué es Vaca Muerta?",
-
-        answers: [
-            "Una formación geológica",
-            "Una provincia",
-            "Una ciudad",
-            "Una cuenca independiente"
-        ],
-
-        correct: 0
-    },
-
-
-    {
-        question:
-            "¿Qué técnica permite aumentar el contacto del pozo con la formación?",
-
-        answers: [
-            "Perforación horizontal",
-            "Perforación exclusivamente vertical",
-            "Explosión superficial",
-            "Dragado"
-        ],
-
-        correct: 0
-    },
-
-
-    {
-        question:
-            "¿Qué busca lograr la fractura hidráulica?",
-
-        answers: [
-            "Generar fracturas controladas y aumentar la conductividad",
-            "Crear una nueva cuenca",
-            "Eliminar la roca generadora",
-            "Cerrar el pozo"
-        ],
-
-        correct: 0
-    },
-
-
-    {
-        question:
-            "¿Cuál de estas provincias forma parte del ámbito de la Cuenca Neuquina?",
-
-        answers: [
-            "Neuquén",
-            "Misiones",
-            "Jujuy",
-            "Tierra del Fuego exclusivamente"
-        ],
-
-        correct: 0
+    if(document.body.classList.contains("stand-mode")){
+      standBtn.textContent = "Salir del Stand";
+    }else{
+      standBtn.textContent = "Modo Stand";
     }
 
-];
+  };
 
 
-let currentQuestion = 0;
+  /* =========================
+     LÍNEA DE TIEMPO
+  ========================= */
 
-let score = 0;
+  const times = {
 
-let answered = false;
+    jur: [
+      "JURÁSICO",
+      "La cuenca comienza a definirse",
+      "La evolución tectónica y sedimentaria genera el espacio de acomodación donde posteriormente se acumularán grandes espesores de sedimentos."
+    ],
+
+    tit: [
+      "TITHONIANO",
+      "Se depositan lutitas ricas en materia orgánica",
+      "La inundación marina favorece la sedimentación de materiales finos y ricos en materia orgánica, vinculados a la Formación Vaca Muerta."
+    ],
+
+    ber: [
+      "BERRIASIANO",
+      "Cambian las condiciones sedimentarias",
+      "La evolución continúa con cambios en los ambientes de depósito y el desarrollo de plataformas carbonáticas y otros sistemas sedimentarios."
+    ],
+
+    act: [
+      "ACTUALIDAD",
+      "La geología se convierte en energía",
+      "El conocimiento del subsuelo, la perforación horizontal y la estimulación permiten desarrollar recursos alojados en rocas de baja permeabilidad."
+    ]
+
+  };
 
 
-const questionElement =
-    document.getElementById("question");
+  document.querySelectorAll(".time").forEach(button => {
 
-const answersElement =
-    document.getElementById("answers");
+    button.onclick = () => {
 
-const nextQuestion =
-    document.getElementById("nextQuestion");
+      document.querySelectorAll(".time")
+        .forEach(x => x.classList.remove("active"));
 
-const quizMessage =
-    document.getElementById("quizMessage");
+      button.classList.add("active");
 
-const questionNumber =
-    document.getElementById("questionNumber");
+      const data = times[button.dataset.time];
 
-const scoreElement =
-    document.getElementById("score");
+      document.getElementById("timeLabel").textContent = data[0];
 
-const quizProgress =
-    document.getElementById("quizProgress");
+      document.getElementById("timeTitle").textContent = data[1];
+
+      document.getElementById("timeText").textContent = data[2];
+
+    };
+
+  });
 
 
-function loadQuestion() {
+  /* =========================
+     CONTROL DEL POZO
+  ========================= */
+
+  const depth = document.getElementById("depth");
+
+  depth.oninput = () => {
+
+    document.getElementById("depthValue").textContent =
+      depth.value + "%";
+
+    document.querySelector(".well-demo")
+      .style.setProperty(
+        "--depth",
+        (depth.value - 65) * 1.4 + "px"
+      );
+
+  };
+
+
+  /* =========================
+     LABORATORIO
+  ========================= */
+
+  const porosity = document.getElementById("porosity");
+  const perm = document.getElementById("perm");
+  const organic = document.getElementById("organic");
+
+  function updateReading(){
+
+    const p = Number(porosity.value);
+    const k = Number(perm.value);
+    const o = Number(organic.value);
+
+    let text;
+
+    if(k < 30){
+
+      text =
+        "Matriz compacta · flujo restringido";
+
+    }else if(k < 65){
+
+      text =
+        "Permeabilidad intermedia · conectividad moderada";
+
+    }else{
+
+      text =
+        "Mayor conectividad conceptual · flujo favorecido";
+
+    }
+
+    if(o >= 11){
+
+      text += " · alto contenido orgánico";
+
+    }else if(o >= 7){
+
+      text += " · materia orgánica significativa";
+
+    }
+
+    document.getElementById("readingText")
+      .textContent = text;
+
+  }
+
+
+  [porosity, perm, organic].forEach(slider => {
+
+    slider.oninput = updateReading;
+
+  });
+
+
+  /* =========================
+     QUIZ
+  ========================= */
+
+  const questions = [
+
+    [
+      "¿Qué es Vaca Muerta?",
+      [
+        "Una formación geológica",
+        "Una provincia",
+        "Un tipo de bomba",
+        "Un río"
+      ],
+      0
+    ],
+
+    [
+      "¿Por qué un recurso es considerado no convencional?",
+      [
+        "Porque está en otro país",
+        "Porque requiere técnicas específicas por la baja permeabilidad",
+        "Porque no contiene hidrocarburos",
+        "Porque siempre está en superficie"
+      ],
+      1
+    ],
+
+    [
+      "¿Qué permite el tramo horizontal?",
+      [
+        "Reducir la longitud del pozo",
+        "Aumentar el contacto con la formación objetivo",
+        "Eliminar la necesidad de perforar",
+        "Cambiar la edad de la roca"
+      ],
+      1
+    ],
+
+    [
+      "¿Qué busca la estimulación hidráulica?",
+      [
+        "Crear conductividad en la roca",
+        "Enfriar el yacimiento",
+        "Cambiar la composición del petróleo",
+        "Cerrar el pozo"
+      ],
+      0
+    ],
+
+    [
+      "¿En qué cuenca se encuentra Vaca Muerta?",
+      [
+        "Golfo San Jorge",
+        "Neuquina",
+        "Cuyana",
+        "Austral"
+      ],
+      1
+    ],
+
+    [
+      "¿Qué estudia principalmente la geología del subsuelo?",
+      [
+        "La arquitectura y propiedades de las rocas",
+        "El tránsito urbano",
+        "La meteorología diaria",
+        "La electricidad domiciliaria"
+      ],
+      0
+    ]
+
+  ];
+
+
+  let questionIndex = 0;
+  let points = 0;
+  let answered = false;
+
+
+  function renderQuestion(){
+
+    const q = questions[questionIndex];
+
+    document.getElementById("qNumber").textContent =
+      `Pregunta ${questionIndex + 1} de ${questions.length}`;
+
+    document.getElementById("score").textContent =
+      points + " pts";
+
+    document.getElementById("question").textContent =
+      q[0];
+
+    const answersContainer =
+      document.getElementById("answers");
+
+    answersContainer.innerHTML = "";
+
+    q[1].forEach((answer, index) => {
+
+      const button = document.createElement("button");
+
+      button.className = "answer";
+
+      button.textContent = answer;
+
+      button.onclick = () => {
+
+        chooseAnswer(button, index);
+
+      };
+
+      answersContainer.appendChild(button);
+
+    });
+
+    document.getElementById("result").textContent = "";
 
     answered = false;
 
-    const q =
-        questions[currentQuestion];
+    document.getElementById("next").style.display =
+      "inline-block";
+
+  }
 
 
-    questionElement.textContent =
-        q.question;
+  function chooseAnswer(button, index){
 
-
-    questionNumber.textContent =
-        `Pregunta ${currentQuestion + 1} de ${questions.length}`;
-
-
-    quizProgress.style.width =
-        `${((currentQuestion + 1) / questions.length) * 100}%`;
-
-
-    answersElement.innerHTML = "";
-
-
-    q.answers.forEach((answer, index) => {
-
-        const button =
-            document.createElement("button");
-
-        button.textContent =
-            answer;
-
-        button.addEventListener(
-            "click",
-            () => checkAnswer(index, button)
-        );
-
-        answersElement.appendChild(button);
-
-    });
-
-
-    quizMessage.textContent = "";
-
-    nextQuestion.style.display =
-        "none";
-}
-
-
-function checkAnswer(index, button) {
-
-    if (answered) return;
+    if(answered) return;
 
     answered = true;
 
     const correct =
-        questions[currentQuestion].correct;
+      questions[questionIndex][2];
+
+    const buttons =
+      document.querySelectorAll(".answer");
+
+    buttons[correct].classList.add("correct");
 
 
-    if (index === correct) {
+    if(index === correct){
 
-        score++;
+      points++;
 
-        button.classList.add("correct");
+      button.classList.add("correct");
 
-        quizMessage.textContent =
-            "✓ ¡Correcto! Muy bien.";
+      document.getElementById("result").textContent =
+        "✓ Correcto. +1 punto";
 
-        quizMessage.style.color =
-            "#39905b";
+    }else{
 
-    } else {
+      button.classList.add("wrong");
 
-        button.classList.add("wrong");
-
-        answersElement
-            .children[correct]
-            .classList.add("correct");
-
-        quizMessage.textContent =
-            "✗ No exactamente. La respuesta correcta está marcada.";
-
-        quizMessage.style.color =
-            "#b44c4c";
+      document.getElementById("result").textContent =
+        "✕ No es esa. Mirá la respuesta marcada.";
 
     }
 
+    document.getElementById("score").textContent =
+      points + " pts";
 
-    scoreElement.textContent =
-        `Puntaje: ${score}`;
-
-    nextQuestion.style.display =
-        "inline-flex";
-
-}
+  }
 
 
-nextQuestion.addEventListener(
-    "click",
-    () => {
+  document.getElementById("next").onclick = () => {
 
-        currentQuestion++;
+    if(!answered){
 
-        if (
-            currentQuestion >=
-            questions.length
-        ) {
+      document.getElementById("result").textContent =
+        "Elegí una respuesta primero.";
 
-            questionElement.innerHTML =
-                `
-                ¡Quiz terminado! 🎉
-                <br>
-                Obtuviste ${score} de ${questions.length}.
-                `;
-
-            answersElement.innerHTML = "";
-
-            quizMessage.innerHTML =
-                score >= 4
-                    ? "Excelente. ¡Ya conocés bastante sobre la Cuenca Neuquina!"
-                    : "¡Buen trabajo! Recorré nuevamente la web y volvé a intentarlo.";
-
-            nextQuestion.textContent =
-                "Volver a empezar";
-
-            nextQuestion.style.display =
-                "inline-flex";
-
-            nextQuestion.onclick = () => {
-
-                currentQuestion = 0;
-
-                score = 0;
-
-                scoreElement.textContent =
-                    "Puntaje: 0";
-
-                nextQuestion.textContent =
-                    "Siguiente";
-
-                loadQuestion();
-
-            };
-
-        } else {
-
-            loadQuestion();
-
-        }
+      return;
 
     }
-);
+
+    questionIndex++;
+
+    if(questionIndex < questions.length){
+
+      renderQuestion();
+
+    }else{
+
+      document.getElementById("question").textContent =
+        "¡Quiz terminado!";
+
+      document.getElementById("answers").innerHTML = "";
+
+      document.getElementById("next").style.display =
+        "none";
+
+      document.getElementById("result").textContent =
+        `Resultado final: ${points}/${questions.length}. ${
+          points >= 5
+          ? "Excelente dominio del tema."
+          : points >= 3
+          ? "Muy bien, ya tenés una buena base."
+          : "Repasá las secciones y probá de nuevo."
+        }`;
+
+      document.getElementById("qNumber").textContent =
+        "FINALIZADO";
+
+    }
+
+  };
 
 
-loadQuestion();
+  renderQuestion();
 
 
+  /* =========================
+     EXPLICADOR GEOLÓGICO
+  ========================= */
 
-/* =========================================================
-   FAQ
-========================================================= */
+  const knowledge = {
 
-document.querySelectorAll(".faq")
-    .forEach(faq => {
+    shale:
+      "Shale es una roca sedimentaria de grano muy fino y baja permeabilidad. En sistemas no convencionales puede contener hidrocarburos que requieren técnicas específicas para ser producidos.",
 
-        faq.addEventListener("click", () => {
+    fractura:
+      "La estimulación hidráulica consiste en inyectar un fluido a presión para generar una red de fracturas controladas que aumente la conductividad alrededor del pozo.",
 
-            faq.classList.toggle("open");
+    horizontal:
+      "Un pozo horizontal desvía su trayectoria para recorrer una mayor longitud dentro de la formación objetivo y aumentar el contacto con el reservorio.",
 
-        });
+    "vaca muerta":
+      "Vaca Muerta es una formación geológica de la Cuenca Neuquina, reconocida por su riqueza orgánica y por su importancia en el desarrollo de petróleo y gas no convencional.",
 
-    });
+    cuenca:
+      "La Cuenca Neuquina es una cuenca sedimentaria del oeste argentino con una extensa historia geológica y gran importancia hidrocarburífera."
 
-
-
-/* =========================================================
-   PREGUNTARLE AL GEOLOGO
-========================================================= */
-
-const questionInput =
-    document.getElementById(
-        "geologistQuestion"
-    );
-
-const askButton =
-    document.getElementById(
-        "askGeologist"
-    );
-
-const geologistAnswer =
-    document.getElementById(
-        "geologistAnswer"
-    );
+  };
 
 
-function answerQuestion() {
+  const askInput =
+    document.getElementById("askInput");
+
+  const askBtn =
+    document.getElementById("askBtn");
+
+  function askQuestion(){
 
     const question =
-        questionInput.value
-            .toLowerCase()
-            .trim();
+      askInput.value.toLowerCase();
+
+    const key =
+      Object.keys(knowledge)
+        .find(item => question.includes(item));
+
+    document.getElementById("askAnswer")
+      .textContent = key
+        ? knowledge[key]
+        : "Probá con: shale, fractura, pozo horizontal, Vaca Muerta o cuenca.";
+
+  }
 
 
-    if (!question) {
-
-        geologistAnswer.innerHTML =
-            "Escribí una pregunta para comenzar.";
-
-        return;
-
-    }
+  askBtn.onclick = askQuestion;
 
 
-    if (
-        question.includes("vaca muerta")
-    ) {
+  askInput.onkeydown = event => {
 
-        geologistAnswer.innerHTML =
-            `
-            <strong>Respuesta:</strong><br><br>
-            Vaca Muerta es una formación geológica
-            de la Cuenca Neuquina. Está compuesta por
-            rocas sedimentarias ricas en materia orgánica
-            y es uno de los principales objetivos del
-            desarrollo no convencional argentino.
-            `;
+    if(event.key === "Enter"){
 
-        return;
+      askQuestion();
 
     }
 
-
-    if (
-        question.includes("fracking") ||
-        question.includes("fractura")
-    ) {
-
-        geologistAnswer.innerHTML =
-            `
-            <strong>Respuesta:</strong><br><br>
-            La fractura hidráulica es una técnica de
-            estimulación que utiliza fluidos a alta presión
-            para generar fracturas controladas en la roca,
-            aumentando la conductividad hacia el pozo.
-            `;
-
-        return;
-
-    }
+  };
 
 
-    if (
-        question.includes("horizontal") ||
-        question.includes("pozo")
-    ) {
+  /* =========================
+     QR
+  ========================= */
 
-        geologistAnswer.innerHTML =
-            `
-            <strong>Respuesta:</strong><br><br>
-            La perforación horizontal permite que una sección
-            del pozo se desarrolle dentro de la formación
-            objetivo, aumentando la longitud de contacto
-            con la roca.
-            `;
-
-        return;
-
-    }
-
-
-    if (
-        question.includes("cuenca")
-    ) {
-
-        geologistAnswer.innerHTML =
-            `
-            <strong>Respuesta:</strong><br><br>
-            La Cuenca Neuquina es una cuenca sedimentaria
-            ubicada principalmente en el centro-oeste de
-            Argentina y abarca sectores de varias provincias.
-            `;
-
-        return;
-
-    }
-
-
-    geologistAnswer.innerHTML =
-        `
-        <strong>Respuesta educativa:</strong><br><br>
-        Esa pregunta no está incluida todavía en nuestra
-        base de respuestas. Podés consultar las secciones
-        de Geología, Vaca Muerta y Proceso para encontrar
-        más información.
-        `;
-
-}
-
-
-askButton.addEventListener(
-    "click",
-    answerQuestion
-);
-
-
-questionInput.addEventListener(
-    "keydown",
-    event => {
-
-        if (event.key === "Enter") {
-
-            answerQuestion();
-
-        }
-
-    }
-);
-
-
-
-/* =========================================================
-   MODO STAND
-========================================================= */
-
-const standButton =
-    document.getElementById(
-        "standMode"
-    );
-
-
-standButton.addEventListener(
-    "click",
-    async () => {
-
-        document.body.classList.toggle(
-            "stand-mode"
-        );
-
-
-        if (
-            !document.fullscreenElement
-        ) {
-
-            try {
-
-                await document.documentElement
-                    .requestFullscreen();
-
-            } catch (error) {
-
-                console.log(
-                    "Fullscreen no disponible."
-                );
-
-            }
-
-        } else {
-
-            try {
-
-                await document.exitFullscreen();
-
-            } catch (error) {}
-
-        }
-
-    }
-);
-
-
-
-/* =========================================================
-   QR
-========================================================= */
-
-const qrElement =
-    document.getElementById(
-        "qrcode"
-    );
-
-
-if (qrElement) {
+  try{
 
     new QRCode(
-        qrElement,
-        {
-            text: window.location.href,
-
-            width: 150,
-
-            height: 150,
-
-            colorDark: "#111111",
-
-            colorLight: "#ffffff",
-
-            correctLevel:
-                QRCode.CorrectLevel.H
-        }
+      document.getElementById("qrcode"),
+      {
+        text: location.href,
+        width:110,
+        height:110,
+        colorDark:"#111118",
+        colorLight:"#ffffff"
+      }
     );
 
-}
+  }catch(error){
+
+    document.getElementById("qrcode")
+      .textContent = "QR";
+
+  }
 
 
-
-/* =========================================================
-   BOTÓN VOLVER ARRIBA
-========================================================= */
-
-const topButton =
-    document.getElementById(
-        "topBtn"
-    );
-
-
-window.addEventListener(
-    "scroll",
-    () => {
-
-        if (window.scrollY > 500) {
-
-            topButton.classList.add(
-                "visible"
-            );
-
-        } else {
-
-            topButton.classList.remove(
-                "visible"
-            );
-
-        }
-
-    }
-);
-
-
-topButton.addEventListener(
-    "click",
-    () => {
-
-        window.scrollTo({
-            top: 0,
-            behavior: "smooth"
-        });
-
-    }
-);
-
-
-
-/* =========================================================
-   NAVBAR AL HACER SCROLL
-========================================================= */
-
-window.addEventListener(
-    "scroll",
-    () => {
-
-        const navbar =
-            document.getElementById(
-                "navbar"
-            );
-
-
-        if (window.scrollY > 100) {
-
-            navbar.style.background =
-                "rgba(7,6,10,0.97)";
-
-        } else {
-
-            navbar.style.background =
-                "rgba(9,7,13,0.88)";
-
-        }
-
-    }
-);
-<link rel="icon" type="favicon/png" href="favicon.png">
+});
