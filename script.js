@@ -9,7 +9,6 @@ document.addEventListener("DOMContentLoaded", () => {
   // 1. LOADER
   // =========================================================
 
-  // Oculta la pantalla "Cargando experiencia geológica..."
   setTimeout(() => {
     document.body.classList.add("loaded");
   }, 350);
@@ -58,6 +57,191 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
     });
+
+  }
+
+
+  // =========================================================
+  // 3.B. MAPA INTERACTIVO Y DINÁMICO (LEAFLET.JS)
+  // =========================================================
+
+  const mapContainer = document.getElementById("mapa-cuenca");
+
+  if (mapContainer && typeof L !== "undefined") {
+
+    // Center coordinates for Neuquén Basin
+    const cuencaCenter = [-37.8, -69.2];
+    const vacaCenter = [-38.1, -68.8];
+
+    // Initialize Map
+    const map = L.map('mapa-cuenca', {
+      center: cuencaCenter,
+      zoom: 6,
+      zoomControl: false,
+      scrollWheelZoom: false
+    });
+
+    // Custom Zoom controls at top-left
+    L.control.zoom({ position: 'topleft' }).addTo(map);
+
+    // Dark Map Layer from CartoDB
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+      attribution: '&copy; OpenStreetMap &copy; CARTO',
+      subdomains: 'abcd',
+      maxZoom: 18
+    }).addTo(map);
+
+    // 1. Polygon: Cuenca Neuquina (Regional Area)
+    const cuencaCoords = [
+      [-35.2, -70.4],
+      [-35.8, -67.6],
+      [-37.0, -66.2],
+      [-39.8, -66.8],
+      [-40.6, -69.2],
+      [-39.8, -71.5],
+      [-37.5, -71.2]
+    ];
+
+    const cuencaLayer = L.polygon(cuencaCoords, {
+      color: '#9877ff',
+      weight: 2,
+      dashArray: '5, 5',
+      fillColor: '#8b63ff',
+      fillOpacity: 0.12
+    }).addTo(map);
+
+    cuencaLayer.bindPopup(`
+      <div class="map-popup-title">Cuenca Neuquina</div>
+      <div class="map-popup-desc">
+        Extensa cuenca sedimentaria de más de 120.000 km² que abarca Neuquén, Río Negro, Mendoza y La Pampa.
+      </div>
+    `);
+
+    // 2. Polygon: Formación Vaca Muerta (Core Shale Area)
+    const vacaMuertaCoords = [
+      [-36.9, -70.1],
+      [-37.2, -68.3],
+      [-38.2, -68.0],
+      [-39.2, -68.7],
+      [-38.9, -70.2],
+      [-37.8, -70.4]
+    ];
+
+    const vacaLayer = L.polygon(vacaMuertaCoords, {
+      color: '#00f2fe',
+      weight: 2,
+      fillColor: '#6366f1',
+      fillOpacity: 0.45
+    }).addTo(map);
+
+    vacaLayer.bindPopup(`
+      <div class="map-popup-title">Formación Vaca Muerta</div>
+      <div class="map-popup-desc">
+        Roca generadora (Shale) de 30.000 km² de proyección con elevado contenido orgánico (TOC 3% - 8%).
+      </div>
+    `);
+
+    // 3. Key Localities / Cities Markers
+    const ciudadelas = [
+      {
+        nombre: "Añelo",
+        coords: [-38.35, -68.78],
+        desc: "Capital nacional de los recursos no convencionales (Vaca Muerta).",
+        esencial: true
+      },
+      {
+        nombre: "Neuquén Cap.",
+        coords: [-38.95, -68.06],
+        desc: "Centro administrativo y logístico de la cuenca.",
+        esencial: false
+      },
+      {
+        nombre: "Rincón de los Sauces",
+        coords: [-37.39, -68.93],
+        desc: "Polo histórico hidrocarburífero del norte neuquino.",
+        esencial: false
+      },
+      {
+        nombre: "Cutral Có",
+        coords: [-38.93, -69.23],
+        desc: "Zona clave de yacimientos tradicionales y no convencionales.",
+        esencial: false
+      },
+      {
+        nombre: "Malargüe",
+        coords: [-35.47, -69.58],
+        desc: "Extensión norte de la cuenca en la provincia de Mendoza.",
+        esencial: false
+      }
+    ];
+
+    const ciudadelasLayer = L.layerGroup().addTo(map);
+
+    ciudadelas.forEach(ciudad => {
+      const marker = L.circleMarker(ciudad.coords, {
+        radius: ciudad.esencial ? 7 : 5,
+        color: ciudad.esencial ? '#00f2fe' : '#b49dff',
+        fillColor: ciudad.esencial ? '#00f2fe' : '#8b63ff',
+        fillOpacity: 0.9,
+        weight: 2
+      });
+
+      marker.bindPopup(`
+        <div class="map-popup-title">${ciudad.nombre}</div>
+        <div class="map-popup-desc">${ciudad.desc}</div>
+      `);
+
+      marker.bindTooltip(ciudad.nombre, {
+        permanent: true,
+        direction: 'right',
+        className: 'map-label-custom'
+      });
+
+      ciudadelasLayer.addLayer(marker);
+    });
+
+    // 4. Map Custom Legend
+    const legend = L.control({ position: 'bottomleft' });
+    legend.onAdd = function () {
+      const div = L.DomUtil.create('div', 'map-legend');
+      div.innerHTML = `
+        <div class="map-legend-item">
+          <span class="map-legend-color" style="background: rgba(139,99,255,0.4); border:1px solid #9877ff;"></span>
+          <span>Cuenca Neuquina</span>
+        </div>
+        <div class="map-legend-item">
+          <span class="map-legend-color" style="background: rgba(99,102,241,0.8); border:1px solid #00f2fe;"></span>
+          <span>Vaca Muerta (Shale)</span>
+        </div>
+      `;
+      return div;
+    };
+    legend.addTo(map);
+
+    // 5. Control de Capas Interactivas
+    const overlays = {
+      "Límite de Cuenca": cuencaLayer,
+      "Área Vaca Muerta": vacaLayer,
+      "Ciudades Clave": ciudadelasLayer
+    };
+    L.control.layers(null, overlays, { position: 'topright', collapsed: true }).addTo(map);
+
+    // 6. Navigation Controls
+    const btnFocusCuenca = document.getElementById("btnFocusCuenca");
+    const btnFocusVaca = document.getElementById("btnFocusVaca");
+
+    if (btnFocusCuenca) {
+      btnFocusCuenca.addEventListener("click", () => {
+        map.flyTo(cuencaCenter, 6, { duration: 1.2 });
+      });
+    }
+
+    if (btnFocusVaca) {
+      btnFocusVaca.addEventListener("click", () => {
+        map.flyTo(vacaCenter, 8, { duration: 1.2 });
+        vacaLayer.openPopup();
+      });
+    }
 
   }
 
