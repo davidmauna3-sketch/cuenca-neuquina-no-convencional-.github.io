@@ -1,11 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
 
   // =========================================================
-  // CUENCA NEUQUINA — SCRIPT PRINCIPAL
-  // =========================================================
-
-
-  // =========================================================
   // 1. LOADER
   // =========================================================
 
@@ -22,19 +17,15 @@ document.addEventListener("DOMContentLoaded", () => {
   const nav = document.getElementById("nav");
 
   if (menuBtn && nav) {
-
     menuBtn.addEventListener("click", () => {
       nav.classList.toggle("open");
     });
 
     nav.querySelectorAll("a").forEach(link => {
-
       link.addEventListener("click", () => {
         nav.classList.remove("open");
       });
-
     });
-
   }
 
 
@@ -45,204 +36,181 @@ document.addEventListener("DOMContentLoaded", () => {
   const standBtn = document.getElementById("standBtn");
 
   if (standBtn) {
-
     standBtn.addEventListener("click", () => {
-
       document.body.classList.toggle("stand-mode");
-
       if (document.body.classList.contains("stand-mode")) {
         standBtn.textContent = "Salir del modo stand";
       } else {
         standBtn.textContent = "Modo Stand";
       }
-
     });
-
   }
 
 
   // =========================================================
-  // 3.B. MAPA INTERACTIVO Y DINÁMICO (LEAFLET.JS)
+  // 3.B. MAPA INTERACTIVO (LEAFLET.JS CON CORRECCIÓN DE TAMAÑO)
   // =========================================================
 
   const mapContainer = document.getElementById("mapa-cuenca");
 
-  if (mapContainer && typeof L !== "undefined") {
+  if (mapContainer) {
 
-    // Center coordinates for Neuquén Basin
-    const cuencaCenter = [-37.8, -69.2];
-    const vacaCenter = [-38.1, -68.8];
+    // Función segura para inicializar el mapa cuando Leaflet está listo
+    const initMap = () => {
 
-    // Initialize Map
-    const map = L.map('mapa-cuenca', {
-      center: cuencaCenter,
-      zoom: 6,
-      zoomControl: false,
-      scrollWheelZoom: false
-    });
-
-    // Custom Zoom controls at top-left
-    L.control.zoom({ position: 'topleft' }).addTo(map);
-
-    // Dark Map Layer from CartoDB
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-      attribution: '&copy; OpenStreetMap &copy; CARTO',
-      subdomains: 'abcd',
-      maxZoom: 18
-    }).addTo(map);
-
-    // 1. Polygon: Cuenca Neuquina (Regional Area)
-    const cuencaCoords = [
-      [-35.2, -70.4],
-      [-35.8, -67.6],
-      [-37.0, -66.2],
-      [-39.8, -66.8],
-      [-40.6, -69.2],
-      [-39.8, -71.5],
-      [-37.5, -71.2]
-    ];
-
-    const cuencaLayer = L.polygon(cuencaCoords, {
-      color: '#9877ff',
-      weight: 2,
-      dashArray: '5, 5',
-      fillColor: '#8b63ff',
-      fillOpacity: 0.12
-    }).addTo(map);
-
-    cuencaLayer.bindPopup(`
-      <div class="map-popup-title">Cuenca Neuquina</div>
-      <div class="map-popup-desc">
-        Extensa cuenca sedimentaria de más de 120.000 km² que abarca Neuquén, Río Negro, Mendoza y La Pampa.
-      </div>
-    `);
-
-    // 2. Polygon: Formación Vaca Muerta (Core Shale Area)
-    const vacaMuertaCoords = [
-      [-36.9, -70.1],
-      [-37.2, -68.3],
-      [-38.2, -68.0],
-      [-39.2, -68.7],
-      [-38.9, -70.2],
-      [-37.8, -70.4]
-    ];
-
-    const vacaLayer = L.polygon(vacaMuertaCoords, {
-      color: '#00f2fe',
-      weight: 2,
-      fillColor: '#6366f1',
-      fillOpacity: 0.45
-    }).addTo(map);
-
-    vacaLayer.bindPopup(`
-      <div class="map-popup-title">Formación Vaca Muerta</div>
-      <div class="map-popup-desc">
-        Roca generadora (Shale) de 30.000 km² de proyección con elevado contenido orgánico (TOC 3% - 8%).
-      </div>
-    `);
-
-    // 3. Key Localities / Cities Markers
-    const ciudadelas = [
-      {
-        nombre: "Añelo",
-        coords: [-38.35, -68.78],
-        desc: "Capital nacional de los recursos no convencionales (Vaca Muerta).",
-        esencial: true
-      },
-      {
-        nombre: "Neuquén Cap.",
-        coords: [-38.95, -68.06],
-        desc: "Centro administrativo y logístico de la cuenca.",
-        esencial: false
-      },
-      {
-        nombre: "Rincón de los Sauces",
-        coords: [-37.39, -68.93],
-        desc: "Polo histórico hidrocarburífero del norte neuquino.",
-        esencial: false
-      },
-      {
-        nombre: "Cutral Có",
-        coords: [-38.93, -69.23],
-        desc: "Zona clave de yacimientos tradicionales y no convencionales.",
-        esencial: false
-      },
-      {
-        nombre: "Malargüe",
-        coords: [-35.47, -69.58],
-        desc: "Extensión norte de la cuenca en la provincia de Mendoza.",
-        esencial: false
+      if (typeof L === "undefined") {
+        setTimeout(initMap, 100);
+        return;
       }
-    ];
 
-    const ciudadelasLayer = L.layerGroup().addTo(map);
+      // Coordenadas geográficas
+      const cuencaCenter = [-37.8, -69.2];
+      const vacaCenter = [-38.1, -68.8];
 
-    ciudadelas.forEach(ciudad => {
-      const marker = L.circleMarker(ciudad.coords, {
-        radius: ciudad.esencial ? 7 : 5,
-        color: ciudad.esencial ? '#00f2fe' : '#b49dff',
-        fillColor: ciudad.esencial ? '#00f2fe' : '#8b63ff',
-        fillOpacity: 0.9,
-        weight: 2
+      // Instancia de Mapa Leaflet
+      const map = L.map('mapa-cuenca', {
+        center: cuencaCenter,
+        zoom: 6,
+        zoomControl: false,
+        scrollWheelZoom: false
       });
 
-      marker.bindPopup(`
-        <div class="map-popup-title">${ciudad.nombre}</div>
-        <div class="map-popup-desc">${ciudad.desc}</div>
+      // Control de Zoom
+      L.control.zoom({ position: 'topleft' }).addTo(map);
+
+      // Capa base estándar de OpenStreetMap (Soporte asegurado)
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 18,
+        attribution: '&copy; OpenStreetMap'
+      }).addTo(map);
+
+      // Polígono: Cuenca Neuquina (Violeta translucent)
+      const cuencaCoords = [
+        [-35.2, -70.4],
+        [-35.8, -67.6],
+        [-37.0, -66.2],
+        [-39.8, -66.8],
+        [-40.6, -69.2],
+        [-39.8, -71.5],
+        [-37.5, -71.2]
+      ];
+
+      const cuencaLayer = L.polygon(cuencaCoords, {
+        color: '#8b63ff',
+        weight: 3,
+        dashArray: '6, 6',
+        fillColor: '#8b63ff',
+        fillOpacity: 0.25
+      }).addTo(map);
+
+      cuencaLayer.bindPopup(`
+        <div class="map-popup-title">Cuenca Neuquina</div>
+        <div class="map-popup-desc">
+          Cuenca sedimentaria de más de 120.000 km² abarcando Neuquén, Río Negro, Mendoza y La Pampa.
+        </div>
       `);
 
-      marker.bindTooltip(ciudad.nombre, {
-        permanent: true,
-        direction: 'right',
-        className: 'map-label-custom'
-      });
+      // Polígono: Vaca Muerta (Índigo neón)
+      const vacaMuertaCoords = [
+        [-36.9, -70.1],
+        [-37.2, -68.3],
+        [-38.2, -68.0],
+        [-39.2, -68.7],
+        [-38.9, -70.2],
+        [-37.8, -70.4]
+      ];
 
-      ciudadelasLayer.addLayer(marker);
-    });
+      const vacaLayer = L.polygon(vacaMuertaCoords, {
+        color: '#6366f1',
+        weight: 2,
+        fillColor: '#3b82f6',
+        fillOpacity: 0.55
+      }).addTo(map);
 
-    // 4. Map Custom Legend
-    const legend = L.control({ position: 'bottomleft' });
-    legend.onAdd = function () {
-      const div = L.DomUtil.create('div', 'map-legend');
-      div.innerHTML = `
-        <div class="map-legend-item">
-          <span class="map-legend-color" style="background: rgba(139,99,255,0.4); border:1px solid #9877ff;"></span>
-          <span>Cuenca Neuquina</span>
+      vacaLayer.bindPopup(`
+        <div class="map-popup-title">Formación Vaca Muerta</div>
+        <div class="map-popup-desc">
+          Roca generadora Shale de 30.000 km² con elevado contenido orgánico (TOC 3% - 8%).
         </div>
-        <div class="map-legend-item">
-          <span class="map-legend-color" style="background: rgba(99,102,241,0.8); border:1px solid #00f2fe;"></span>
-          <span>Vaca Muerta (Shale)</span>
-        </div>
-      `;
-      return div;
-    };
-    legend.addTo(map);
+      `);
 
-    // 5. Control de Capas Interactivas
-    const overlays = {
-      "Límite de Cuenca": cuencaLayer,
-      "Área Vaca Muerta": vacaLayer,
-      "Ciudades Clave": ciudadelasLayer
-    };
-    L.control.layers(null, overlays, { position: 'topright', collapsed: true }).addTo(map);
+      // Marcadores de Ciudades
+      const ciudadelas = [
+        { nombre: "Añelo", coords: [-38.35, -68.78], desc: "Capital del Shale (Vaca Muerta).", esencial: true },
+        { nombre: "Neuquén Cap.", coords: [-38.95, -68.06], desc: "Centro administrativo.", esencial: false },
+        { nombre: "Rincón de los Sauces", coords: [-37.39, -68.93], desc: "Polo histórico de producción.", esencial: false },
+        { nombre: "Cutral Có", coords: [-38.93, -69.23], desc: "Área de yacimientos no convencionales.", esencial: false },
+        { nombre: "Malargüe", coords: [-35.47, -69.58], desc: "Extensión norte en Mendoza.", esencial: false }
+      ];
 
-    // 6. Navigation Controls
-    const btnFocusCuenca = document.getElementById("btnFocusCuenca");
-    const btnFocusVaca = document.getElementById("btnFocusVaca");
+      const ciudadelasLayer = L.layerGroup().addTo(map);
 
-    if (btnFocusCuenca) {
-      btnFocusCuenca.addEventListener("click", () => {
-        map.flyTo(cuencaCenter, 6, { duration: 1.2 });
+      ciudadelas.forEach(ciudad => {
+        const marker = L.circleMarker(ciudad.coords, {
+          radius: ciudad.esencial ? 8 : 6,
+          color: ciudad.esencial ? '#ef4444' : '#8b63ff',
+          fillColor: ciudad.esencial ? '#f87171' : '#a78bfa',
+          fillOpacity: 0.9,
+          weight: 2
+        });
+
+        marker.bindPopup(`
+          <div class="map-popup-title">${ciudad.nombre}</div>
+          <div class="map-popup-desc">${ciudad.desc}</div>
+        `);
+
+        marker.bindTooltip(ciudad.nombre, {
+          permanent: true,
+          direction: 'right',
+          className: 'map-label-custom'
+        });
+
+        ciudadelasLayer.addLayer(marker);
       });
-    }
 
-    if (btnFocusVaca) {
-      btnFocusVaca.addEventListener("click", () => {
-        map.flyTo(vacaCenter, 8, { duration: 1.2 });
-        vacaLayer.openPopup();
-      });
-    }
+      // Leyenda
+      const legend = L.control({ position: 'bottomleft' });
+      legend.onAdd = function () {
+        const div = L.DomUtil.create('div', 'map-legend');
+        div.innerHTML = `
+          <div class="map-legend-item">
+            <span class="map-legend-color" style="background: rgba(139,99,255,0.4); border:1px dashed #8b63ff;"></span>
+            <span>Cuenca Neuquina</span>
+          </div>
+          <div class="map-legend-item">
+            <span class="map-legend-color" style="background: rgba(59,130,246,0.6); border:1px solid #6366f1;"></span>
+            <span>Vaca Muerta (Shale)</span>
+          </div>
+        `;
+        return div;
+      };
+      legend.addTo(map);
 
+      // Botones de Navegación
+      const btnFocusCuenca = document.getElementById("btnFocusCuenca");
+      const btnFocusVaca = document.getElementById("btnFocusVaca");
+
+      if (btnFocusCuenca) {
+        btnFocusCuenca.addEventListener("click", () => {
+          map.flyTo(cuencaCenter, 6, { duration: 1 });
+        });
+      }
+
+      if (btnFocusVaca) {
+        btnFocusVaca.addEventListener("click", () => {
+          map.flyTo(vacaCenter, 8, { duration: 1 });
+          vacaLayer.openPopup();
+        });
+      }
+
+      // SOLUCIÓN CLAVE: FORZAR REDIMENSIONADO DE MAPA TRAS LA CARGA DEL DOM
+      setTimeout(() => {
+        map.invalidateSize();
+      }, 400);
+
+    };
+
+    initMap();
   }
 
 
@@ -251,69 +219,46 @@ document.addEventListener("DOMContentLoaded", () => {
   // =========================================================
 
   const timelineData = {
-
     jur: {
       label: "JURÁSICO",
       title: "La cuenca comienza a definirse",
       text: "La evolución tectónica y sedimentaria genera el espacio de acomodación donde posteriormente se acumularán grandes espesores de sedimentos."
     },
-
     tit: {
       label: "TITHONIANO",
       title: "Se deposita la roca generadora",
       text: "En condiciones marinas relativamente restringidas se acumulan sedimentos ricos en materia orgánica que forman parte del sistema petrolero de la cuenca."
     },
-
     ber: {
       label: "BERRIASIANO",
       title: "Continúa la evolución sedimentaria",
       text: "La sedimentación y los cambios ambientales modifican la arquitectura de la cuenca y contribuyen a la configuración de las unidades geológicas."
     },
-
     act: {
       label: "ACTUALIDAD",
       title: "Desarrollo no convencional",
       text: "La combinación de perforación horizontal y estimulación hidráulica permite desarrollar recursos alojados en formaciones de muy baja permeabilidad."
     }
-
   };
-
 
   const timeButtons = document.querySelectorAll(".time");
   const timeLabel = document.getElementById("timeLabel");
   const timeTitle = document.getElementById("timeTitle");
   const timeText = document.getElementById("timeText");
 
-
   timeButtons.forEach(button => {
-
     button.addEventListener("click", () => {
-
       const key = button.dataset.time;
       const data = timelineData[key];
-
       if (!data) return;
 
-      timeButtons.forEach(btn => {
-        btn.classList.remove("active");
-      });
-
+      timeButtons.forEach(btn => btn.classList.remove("active"));
       button.classList.add("active");
 
-      if (timeLabel) {
-        timeLabel.textContent = data.label;
-      }
-
-      if (timeTitle) {
-        timeTitle.textContent = data.title;
-      }
-
-      if (timeText) {
-        timeText.textContent = data.text;
-      }
-
+      if (timeLabel) timeLabel.textContent = data.label;
+      if (timeTitle) timeTitle.textContent = data.title;
+      if (timeText) timeText.textContent = data.text;
     });
-
   });
 
 
@@ -324,45 +269,23 @@ document.addEventListener("DOMContentLoaded", () => {
   const depth = document.getElementById("depth");
   const depthValue = document.getElementById("depthValue");
 
-
   if (depth && depthValue) {
-
     const updateDepth = () => {
-
       depthValue.textContent = `${depth.value}%`;
-
-      const horizontal =
-        document.querySelector(".well-horizontal");
-
-      const fractures =
-        document.querySelectorAll(".frac");
-
+      const horizontal = document.querySelector(".well-horizontal");
+      const fractures = document.querySelectorAll(".frac");
 
       if (horizontal) {
-
-        horizontal.style.top =
-          `${Math.max(48, Number(depth.value) * 0.82)}%`;
-
+        horizontal.style.top = `${Math.max(48, Number(depth.value) * 0.82)}%`;
       }
 
-
       fractures.forEach((fracture, index) => {
-
-        fracture.style.top =
-          `${Math.max(
-            50,
-            Number(depth.value) * 0.82 + index * 6
-          )}%`;
-
+        fracture.style.top = `${Math.max(50, Number(depth.value) * 0.82 + index * 6)}%`;
       });
-
     };
 
-
     depth.addEventListener("input", updateDepth);
-
     updateDepth();
-
   }
 
 
@@ -375,82 +298,33 @@ document.addEventListener("DOMContentLoaded", () => {
   const organic = document.getElementById("organic");
   const readingText = document.getElementById("readingText");
 
-
   const updateReading = () => {
-
-    if (
-      !porosity ||
-      !perm ||
-      !organic ||
-      !readingText
-    ) {
-      return;
-    }
-
+    if (!porosity || !perm || !organic || !readingText) return;
 
     const p = Number(porosity.value);
     const k = Number(perm.value);
     const o = Number(organic.value);
 
-
-    let reading =
-      "Matriz compacta · flujo restringido";
-
+    let reading = "Matriz compacta · flujo restringido";
 
     if (k <= 20 && o >= 9) {
-
-      reading =
-        "Baja permeabilidad · materia orgánica elevada";
-
+      reading = "Baja permeabilidad · materia orgánica elevada";
+    } else if (k > 60 && p > 12) {
+      reading = "Mayor capacidad de flujo · porosidad relativamente alta";
+    } else if (o >= 12) {
+      reading = "Contenido orgánico alto · potencial generador";
+    } else if (p >= 12) {
+      reading = "Porosidad relativamente elevada · mayor espacio poral";
+    } else if (k >= 40) {
+      reading = "Permeabilidad intermedia · flujo menos restringido";
     }
-
-    else if (k > 60 && p > 12) {
-
-      reading =
-        "Mayor capacidad de flujo · porosidad relativamente alta";
-
-    }
-
-    else if (o >= 12) {
-
-      reading =
-        "Contenido orgánico alto · potencial generador";
-
-    }
-
-    else if (p >= 12) {
-
-      reading =
-        "Porosidad relativamente elevada · mayor espacio poral";
-
-    }
-
-    else if (k >= 40) {
-
-      reading =
-        "Permeabilidad intermedia · flujo menos restringido";
-
-    }
-
 
     readingText.textContent = reading;
-
   };
 
-
   [porosity, perm, organic].forEach(control => {
-
-    if (control) {
-
-      control.addEventListener(
-        "input",
-        updateReading
-      );
-
-    }
-
+    if (control) control.addEventListener("input", updateReading);
   });
-
 
   updateReading();
 
@@ -460,330 +334,130 @@ document.addEventListener("DOMContentLoaded", () => {
   // =========================================================
 
   const quizQuestions = [
-
     {
       question: "¿Qué es Vaca Muerta?",
-
-      answers: [
-        "Una formación geológica de la Cuenca Neuquina",
-        "Una ciudad de la Patagonia",
-        "Una empresa petrolera",
-        "Un tipo de perforación"
-      ],
-
+      answers: ["Una formación geológica de la Cuenca Neuquina", "Una ciudad de la Patagonia", "Una empresa petrolera", "Un tipo de perforación"],
       correct: 0
     },
-
-
     {
       question: "¿Por qué un recurso shale requiere técnicas especiales?",
-
-      answers: [
-        "Porque está siempre en la superficie",
-        "Porque la roca presenta muy baja permeabilidad",
-        "Porque no contiene hidrocarburos",
-        "Porque solamente existe en pozos verticales"
-      ],
-
+      answers: ["Porque está siempre en la superficie", "Porque la roca presenta muy baja permeabilidad", "Porque no contiene hidrocarburos", "Porque solamente existe en pozos verticales"],
       correct: 1
     },
-
-
     {
       question: "¿Qué caracteriza a un pozo horizontal?",
-
-      answers: [
-        "Recorre una mayor longitud dentro de la formación objetivo",
-        "No tiene tramo vertical",
-        "Se perfora solamente desde una mina",
-        "No puede producir hidrocarburos"
-      ],
-
+      answers: ["Recorre una mayor longitud dentro de la formación objetivo", "No tiene tramo vertical", "Se perfora solamente desde una mina", "No puede producir hidrocarburos"],
       correct: 0
     },
-
-
     {
       question: "¿Para qué se utiliza la estimulación hidráulica?",
-
-      answers: [
-        "Para enfriar la superficie",
-        "Para crear conductividad mediante fracturas en la roca",
-        "Para cambiar el nombre del pozo",
-        "Para medir la profundidad del terreno"
-      ],
-
+      answers: ["Para enfriar la superficie", "Para crear conductividad mediante fracturas en la roca", "Para cambiar el nombre del pozo", "Para medir la profundidad del terreno"],
       correct: 1
     },
-
-
     {
       question: "¿Qué provincia está directamente asociada al desarrollo de Vaca Muerta?",
-
-      answers: [
-        "Neuquén",
-        "Misiones",
-        "Jujuy",
-        "Santa Cruz"
-      ],
-
+      answers: ["Neuquén", "Misiones", "Jujuy", "Santa Cruz"],
       correct: 0
     },
-
-
     {
       question: "¿Qué propiedad dificulta el flujo en una roca shale?",
-
-      answers: [
-        "Alta permeabilidad",
-        "Baja permeabilidad",
-        "Ausencia de sedimentos",
-        "Exceso de oxígeno"
-      ],
-
+      answers: ["Alta permeabilidad", "Baja permeabilidad", "Ausencia de sedimentos", "Exceso de oxígeno"],
       correct: 1
     }
-
   ];
 
-
-  const qNumber =
-    document.getElementById("qNumber");
-
-  const scoreElement =
-    document.getElementById("score");
-
-  const questionElement =
-    document.getElementById("question");
-
-  const answersElement =
-    document.getElementById("answers");
-
-  const nextButton =
-    document.getElementById("next");
-
-  const resultElement =
-    document.getElementById("result");
-
+  const qNumber = document.getElementById("qNumber");
+  const scoreElement = document.getElementById("score");
+  const questionElement = document.getElementById("question");
+  const answersElement = document.getElementById("answers");
+  const nextButton = document.getElementById("next");
+  const resultElement = document.getElementById("result");
 
   let currentQuestion = 0;
   let score = 0;
   let answered = false;
 
-
   function renderQuestion() {
+    if (!qNumber || !scoreElement || !questionElement || !answersElement || !nextButton || !resultElement) return;
 
-    if (
-      !qNumber ||
-      !scoreElement ||
-      !questionElement ||
-      !answersElement ||
-      !nextButton ||
-      !resultElement
-    ) {
-      return;
-    }
-
-
-    const q =
-      quizQuestions[currentQuestion];
-
-
-    qNumber.textContent =
-      `Pregunta ${currentQuestion + 1} de ${quizQuestions.length}`;
-
-
-    scoreElement.textContent =
-      `${score} pts`;
-
-
-    questionElement.textContent =
-      q.question;
-
-
+    const q = quizQuestions[currentQuestion];
+    qNumber.textContent = `Pregunta ${currentQuestion + 1} de ${quizQuestions.length}`;
+    scoreElement.textContent = `${score} pts`;
+    questionElement.textContent = q.question;
     answersElement.innerHTML = "";
-
     resultElement.textContent = "";
 
     nextButton.disabled = true;
-
     nextButton.style.opacity = "0.55";
-
     answered = false;
 
-
     q.answers.forEach((answer, index) => {
-
-      const button =
-        document.createElement("button");
-
-
+      const button = document.createElement("button");
       button.className = "answer";
-
       button.type = "button";
-
       button.textContent = answer;
 
-
       button.addEventListener("click", () => {
-
         if (answered) return;
-
         answered = true;
 
-
-        const allAnswers =
-          answersElement.querySelectorAll(".answer");
-
-
-        allAnswers.forEach(btn => {
-          btn.disabled = true;
-        });
-
+        const allAnswers = answersElement.querySelectorAll(".answer");
+        allAnswers.forEach(btn => btn.disabled = true);
 
         if (index === q.correct) {
-
           button.classList.add("correct");
-
           score++;
-
-          scoreElement.textContent =
-            `${score} pts`;
-
-          resultElement.textContent =
-            "✓ Correcto";
-
-        }
-
-        else {
-
+          scoreElement.textContent = `${score} pts`;
+          resultElement.textContent = "✓ Correcto";
+        } else {
           button.classList.add("wrong");
-
-          if (allAnswers[q.correct]) {
-            allAnswers[q.correct].classList.add("correct");
-          }
-
-          resultElement.textContent =
-            "✗ Incorrecto";
-
+          if (allAnswers[q.correct]) allAnswers[q.correct].classList.add("correct");
+          resultElement.textContent = "✗ Incorrecto";
         }
-
 
         nextButton.disabled = false;
-
         nextButton.style.opacity = "1";
-
       });
 
-
       answersElement.appendChild(button);
-
     });
-
   }
 
-
-  if (
-    questionElement &&
-    answersElement &&
-    nextButton
-  ) {
-
+  if (questionElement && answersElement && nextButton) {
     renderQuestion();
 
-
     nextButton.addEventListener("click", () => {
-
       if (!answered) return;
-
-
       currentQuestion++;
 
-
-      if (
-        currentQuestion >= quizQuestions.length
-      ) {
-
-        if (qNumber) {
-          qNumber.textContent =
-            "QUIZ COMPLETADO";
-        }
-
-
-        if (questionElement) {
-
-          questionElement.textContent =
-            `Resultado final: ${score} de ${quizQuestions.length} respuestas correctas.`;
-
-        }
-
-
-        if (answersElement) {
-          answersElement.innerHTML = "";
-        }
-
+      if (currentQuestion >= quizQuestions.length) {
+        if (qNumber) qNumber.textContent = "QUIZ COMPLETADO";
+        if (questionElement) questionElement.textContent = `Resultado final: ${score} de ${quizQuestions.length} respuestas correctas.`;
+        if (answersElement) answersElement.innerHTML = "";
 
         if (resultElement) {
-
-          if (
-            score === quizQuestions.length
-          ) {
-
-            resultElement.textContent =
-              "¡Excelente! Dominás los conceptos principales.";
-
-          }
-
-          else if (score >= 4) {
-
-            resultElement.textContent =
-              "¡Muy bien! Tenés una buena base sobre la cuenca.";
-
-          }
-
-          else {
-
-            resultElement.textContent =
-              "Buen comienzo. Volvé a recorrer las secciones y probá nuevamente.";
-
-          }
-
+          if (score === quizQuestions.length) resultElement.textContent = "¡Excelente! Dominás los conceptos principales.";
+          else if (score >= 4) resultElement.textContent = "¡Muy bien! Tenés una buena base sobre la cuenca.";
+          else resultElement.textContent = "Buen comienzo. Volvé a recorrer las secciones y probá nuevamente.";
         }
 
-
-        nextButton.textContent =
-          "Reiniciar quiz";
-
+        nextButton.textContent = "Reiniciar quiz";
         nextButton.disabled = false;
-
         nextButton.style.opacity = "1";
 
-
         nextButton.onclick = () => {
-
           currentQuestion = 0;
-
           score = 0;
-
-          nextButton.textContent =
-            "Siguiente →";
-
+          nextButton.textContent = "Siguiente →";
           nextButton.onclick = null;
-
           renderQuestion();
-
         };
 
-
         return;
-
       }
 
-
       renderQuestion();
-
     });
-
   }
 
 
@@ -791,176 +465,41 @@ document.addEventListener("DOMContentLoaded", () => {
   // 8. EXPLICADOR GEOLÓGICO
   // =========================================================
 
-  const askInput =
-    document.getElementById("askInput");
-
-  const askBtn =
-    document.getElementById("askBtn");
-
-  const askAnswer =
-    document.getElementById("askAnswer");
-
+  const askInput = document.getElementById("askInput");
+  const askBtn = document.getElementById("askBtn");
+  const askAnswer = document.getElementById("askAnswer");
 
   const explanations = [
-
-    {
-      keywords: [
-        "shale",
-        "esquisto"
-      ],
-
-      answer:
-        "El shale es una roca sedimentaria de muy baja permeabilidad. Puede contener hidrocarburos en su matriz y requiere técnicas de desarrollo específicas para favorecer su flujo hacia el pozo."
-    },
-
-
-    {
-      keywords: [
-        "fractura",
-        "fracturación",
-        "fractura hidraulica",
-        "fractura hidráulica",
-        "hidraulica",
-        "hidráulica"
-      ],
-
-      answer:
-        "La estimulación hidráulica utiliza un fluido presurizado para generar o reactivar fracturas en la formación, aumentando la conductividad y facilitando el flujo de hidrocarburos hacia el pozo."
-    },
-
-
-    {
-      keywords: [
-        "horizontal",
-        "pozo horizontal"
-      ],
-
-      answer:
-        "Un pozo horizontal comienza con un tramo vertical y luego se desvía hasta recorrer una sección extensa dentro de la formación objetivo. Esto aumenta el contacto con la roca productiva."
-    },
-
-
-    {
-      keywords: [
-        "vaca muerta"
-      ],
-
-      answer:
-        "Vaca Muerta es una formación geológica de la Cuenca Neuquina, rica en materia orgánica y de muy baja permeabilidad, que contiene importantes recursos de petróleo y gas no convencionales."
-    },
-
-
-    {
-      keywords: [
-        "cuenca",
-        "neuquina"
-      ],
-
-      answer:
-        "La Cuenca Neuquina es una extensa cuenca sedimentaria del oeste argentino. Su evolución geológica generó un sistema petrolero de gran importancia, especialmente por el desarrollo de recursos no convencionales."
-    },
-
-
-    {
-      keywords: [
-        "permeabilidad"
-      ],
-
-      answer:
-        "La permeabilidad describe la capacidad de una roca para permitir el movimiento de fluidos a través de sus poros y conexiones. En el shale suele ser muy baja, lo que dificulta el flujo natural."
-    },
-
-
-    {
-      keywords: [
-        "porosidad"
-      ],
-
-      answer:
-        "La porosidad es la proporción del volumen de una roca que corresponde a espacios porales. Es importante porque esos espacios pueden almacenar fluidos, aunque porosidad y permeabilidad no significan lo mismo."
-    },
-
-
-    {
-      keywords: [
-        "materia organica",
-        "materia orgánica"
-      ],
-
-      answer:
-        "La materia orgánica presente en una roca generadora puede transformarse en hidrocarburos durante su evolución térmica. Su cantidad y madurez son variables importantes del sistema petrolero."
-    }
-
+    { keywords: ["shale", "esquisto"], answer: "El shale es una roca sedimentaria de muy baja permeabilidad. Puede contener hidrocarburos en su matriz y requiere técnicas de desarrollo específicas para favorecer su flujo hacia el pozo." },
+    { keywords: ["fractura", "fracturación", "fractura hidraulica", "fractura hidráulica", "hidraulica", "hidráulica"], answer: "La estimulación hidráulica utiliza un fluido presurizado para generar o reactivar fracturas en la formación, aumentando la conductividad y facilitando el flujo de hidrocarburos hacia el pozo." },
+    { keywords: ["horizontal", "pozo horizontal"], answer: "Un pozo horizontal comienza con un tramo vertical y luego se desvía hasta recorrer una sección extensa dentro de la formación objetivo. Esto aumenta el contacto con la roca productiva." },
+    { keywords: ["vaca muerta"], answer: "Vaca Muerta es una formación geológica de la Cuenca Neuquina, rica en materia orgánica y de muy baja permeabilidad, que contiene importantes recursos de petróleo y gas no convencionales." },
+    { keywords: ["cuenca", "neuquina"], answer: "La Cuenca Neuquina es una extensa cuenca sedimentaria del oeste argentino. Su evolución geológica generó un sistema petrolero de gran importancia, especialmente por el desarrollo de recursos no convencionales." },
+    { keywords: ["permeabilidad"], answer: "La permeabilidad describe la capacidad de una roca para permitir el movimiento de fluidos a través de sus poros y conexiones. En el shale suele ser muy baja, lo que dificulta el flujo natural." },
+    { keywords: ["porosidad"], answer: "La porosidad es la proporción del volumen de una roca que corresponde a espacios porales. Es importante porque esos espacios pueden almacenar fluidos, aunque porosidad y permeabilidad no significan lo mismo." },
+    { keywords: ["materia organica", "materia orgánica"], answer: "La materia orgánica presente en una roca generadora puede transformarse en hidrocarburos durante su evolución térmica. Su cantidad y madurez son variables importantes del sistema petrolero." }
   ];
 
-
   function answerQuestion() {
-
     if (!askInput || !askAnswer) return;
-
-
-    const query =
-      askInput.value.trim().toLowerCase();
-
+    const query = askInput.value.trim().toLowerCase();
 
     if (!query) {
-
-      askAnswer.textContent =
-        "Escribí una palabra o una pregunta, por ejemplo: ¿qué es shale?";
-
+      askAnswer.textContent = "Escribí una palabra o una pregunta, por ejemplo: ¿qué es shale?";
       return;
-
     }
 
+    const match = explanations.find(item => item.keywords.some(keyword => query.includes(keyword)));
 
-    const match =
-      explanations.find(item =>
-        item.keywords.some(keyword =>
-          query.includes(keyword)
-        )
-      );
-
-
-    if (match) {
-
-      askAnswer.textContent =
-        match.answer;
-
-    }
-
-    else {
-
-      askAnswer.textContent =
-        "No encontré esa palabra en el explicador rápido. Probá con: shale, fractura, pozo horizontal, Vaca Muerta, cuenca, permeabilidad, porosidad o materia orgánica.";
-
-    }
-
+    if (match) askAnswer.textContent = match.answer;
+    else askAnswer.textContent = "No encontré esa palabra en el explicador rápido. Probá con: shale, fractura, pozo horizontal, Vaca Muerta, cuenca, permeabilidad, porosidad o materia orgánica.";
   }
 
-
-  if (askBtn) {
-
-    askBtn.addEventListener(
-      "click",
-      answerQuestion
-    );
-
-  }
-
-
+  if (askBtn) askBtn.addEventListener("click", answerQuestion);
   if (askInput) {
-
-    askInput.addEventListener(
-      "keydown",
-      event => {
-
-        if (event.key === "Enter") {
-          answerQuestion();
-        }
-
-      }
-    );
-
+    askInput.addEventListener("keydown", event => {
+      if (event.key === "Enter") answerQuestion();
+    });
   }
 
 
@@ -968,46 +507,16 @@ document.addEventListener("DOMContentLoaded", () => {
   // 9. CÓDIGO QR
   // =========================================================
 
-  const qrContainer =
-    document.getElementById("qrcode");
+  const qrContainer = document.getElementById("qrcode");
 
-
-  if (
-    qrContainer &&
-    typeof QRCode !== "undefined"
-  ) {
-
+  if (qrContainer && typeof QRCode !== "undefined") {
     qrContainer.innerHTML = "";
-
-
     new QRCode(qrContainer, {
-
       text: window.location.href,
-
       width: 110,
-
       height: 110,
-
       correctLevel: QRCode.CorrectLevel.M
-
     });
-
   }
-
-
-  // =========================================================
-  // 10. AÑO AUTOMÁTICO
-  // =========================================================
-
-  const yearElements =
-    document.querySelectorAll("[data-year]");
-
-
-  yearElements.forEach(element => {
-
-    element.textContent =
-      new Date().getFullYear();
-
-  });
 
 });
