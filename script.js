@@ -1,419 +1,611 @@
 document.addEventListener("DOMContentLoaded", () => {
 
-  /* =========================
-     LOADER
-  ========================= */
+  // =========================================================
+  // CUENCA NEUQUINA — SCRIPT PRINCIPAL
+  // =========================================================
 
+
+  // =========================================================
+  // 1. LOADER
+  // =========================================================
+
+  // Oculta la pantalla "Cargando experiencia geológica..."
   setTimeout(() => {
     document.body.classList.add("loaded");
-  }, 500);
+  }, 350);
 
 
-  /* =========================
-     MENÚ CELULAR
-  ========================= */
+  // =========================================================
+  // 2. MENÚ MÓVIL
+  // =========================================================
 
+  const menuBtn = document.getElementById("menuBtn");
   const nav = document.getElementById("nav");
-  const menu = document.getElementById("menuBtn");
 
-  menu.onclick = () => {
-    nav.classList.toggle("open");
-  };
+  if (menuBtn && nav) {
 
-  document.querySelectorAll("nav a").forEach(link => {
+    menuBtn.addEventListener("click", () => {
+      nav.classList.toggle("open");
+    });
 
-    link.onclick = () => {
-      nav.classList.remove("open");
-    };
+    nav.querySelectorAll("a").forEach(link => {
 
-  });
+      link.addEventListener("click", () => {
+        nav.classList.remove("open");
+      });
+
+    });
+
+  }
 
 
-  /* =========================
-     MODO STAND
-  ========================= */
+  // =========================================================
+  // 3. MODO STAND
+  // =========================================================
 
   const standBtn = document.getElementById("standBtn");
 
-  standBtn.onclick = () => {
+  if (standBtn) {
 
-    document.body.classList.toggle("stand-mode");
+    standBtn.addEventListener("click", () => {
 
-    if(document.body.classList.contains("stand-mode")){
-      standBtn.textContent = "Salir del Stand";
-    }else{
-      standBtn.textContent = "Modo Stand";
+      document.body.classList.toggle("stand-mode");
+
+      if (document.body.classList.contains("stand-mode")) {
+        standBtn.textContent = "Salir del modo stand";
+      } else {
+        standBtn.textContent = "Modo Stand";
+      }
+
+    });
+
+  }
+
+
+  // =========================================================
+  // 4. LÍNEA DE TIEMPO GEOLÓGICA
+  // =========================================================
+
+  const timelineData = {
+
+    jur: {
+      label: "JURÁSICO",
+      title: "La cuenca comienza a definirse",
+      text: "La evolución tectónica y sedimentaria genera el espacio de acomodación donde posteriormente se acumularán grandes espesores de sedimentos."
+    },
+
+    tit: {
+      label: "TITHONIANO",
+      title: "Se deposita la roca generadora",
+      text: "En condiciones marinas relativamente restringidas se acumulan sedimentos ricos en materia orgánica que forman parte del sistema petrolero de la cuenca."
+    },
+
+    ber: {
+      label: "BERRIASIANO",
+      title: "Continúa la evolución sedimentaria",
+      text: "La sedimentación y los cambios ambientales modifican la arquitectura de la cuenca y contribuyen a la configuración de las unidades geológicas."
+    },
+
+    act: {
+      label: "ACTUALIDAD",
+      title: "Desarrollo no convencional",
+      text: "La combinación de perforación horizontal y estimulación hidráulica permite desarrollar recursos alojados en formaciones de muy baja permeabilidad."
     }
 
   };
 
 
-  /* =========================
-     LÍNEA DE TIEMPO
-  ========================= */
-
-  const times = {
-
-    jur: [
-      "JURÁSICO",
-      "La cuenca comienza a definirse",
-      "La evolución tectónica y sedimentaria genera el espacio de acomodación donde posteriormente se acumularán grandes espesores de sedimentos."
-    ],
-
-    tit: [
-      "TITHONIANO",
-      "Se depositan lutitas ricas en materia orgánica",
-      "La inundación marina favorece la sedimentación de materiales finos y ricos en materia orgánica, vinculados a la Formación Vaca Muerta."
-    ],
-
-    ber: [
-      "BERRIASIANO",
-      "Cambian las condiciones sedimentarias",
-      "La evolución continúa con cambios en los ambientes de depósito y el desarrollo de plataformas carbonáticas y otros sistemas sedimentarios."
-    ],
-
-    act: [
-      "ACTUALIDAD",
-      "La geología se convierte en energía",
-      "El conocimiento del subsuelo, la perforación horizontal y la estimulación permiten desarrollar recursos alojados en rocas de baja permeabilidad."
-    ]
-
-  };
+  const timeButtons = document.querySelectorAll(".time");
+  const timeLabel = document.getElementById("timeLabel");
+  const timeTitle = document.getElementById("timeTitle");
+  const timeText = document.getElementById("timeText");
 
 
-  document.querySelectorAll(".time").forEach(button => {
+  timeButtons.forEach(button => {
 
-    button.onclick = () => {
+    button.addEventListener("click", () => {
 
-      document.querySelectorAll(".time")
-        .forEach(x => x.classList.remove("active"));
+      const key = button.dataset.time;
+      const data = timelineData[key];
+
+      if (!data) return;
+
+      timeButtons.forEach(btn => {
+        btn.classList.remove("active");
+      });
 
       button.classList.add("active");
 
-      const data = times[button.dataset.time];
+      if (timeLabel) {
+        timeLabel.textContent = data.label;
+      }
 
-      document.getElementById("timeLabel").textContent = data[0];
+      if (timeTitle) {
+        timeTitle.textContent = data.title;
+      }
 
-      document.getElementById("timeTitle").textContent = data[1];
+      if (timeText) {
+        timeText.textContent = data.text;
+      }
 
-      document.getElementById("timeText").textContent = data[2];
-
-    };
+    });
 
   });
 
 
-  /* =========================
-     CONTROL DEL POZO
-  ========================= */
+  // =========================================================
+  // 5. CONTROL DE PROFUNDIDAD
+  // =========================================================
 
   const depth = document.getElementById("depth");
-
-  depth.oninput = () => {
-
-    document.getElementById("depthValue").textContent =
-      depth.value + "%";
-
-    document.querySelector(".well-demo")
-      .style.setProperty(
-        "--depth",
-        (depth.value - 65) * 1.4 + "px"
-      );
-
-  };
+  const depthValue = document.getElementById("depthValue");
 
 
-  /* =========================
-     LABORATORIO
-  ========================= */
+  if (depth && depthValue) {
+
+    const updateDepth = () => {
+
+      depthValue.textContent = `${depth.value}%`;
+
+      const horizontal =
+        document.querySelector(".well-horizontal");
+
+      const fractures =
+        document.querySelectorAll(".frac");
+
+
+      if (horizontal) {
+
+        horizontal.style.top =
+          `${Math.max(48, Number(depth.value) * 0.82)}%`;
+
+      }
+
+
+      fractures.forEach((fracture, index) => {
+
+        fracture.style.top =
+          `${Math.max(
+            50,
+            Number(depth.value) * 0.82 + index * 6
+          )}%`;
+
+      });
+
+    };
+
+
+    depth.addEventListener("input", updateDepth);
+
+    updateDepth();
+
+  }
+
+
+  // =========================================================
+  // 6. LABORATORIO — PROPIEDADES DE LA ROCA
+  // =========================================================
 
   const porosity = document.getElementById("porosity");
   const perm = document.getElementById("perm");
   const organic = document.getElementById("organic");
+  const readingText = document.getElementById("readingText");
 
-  function updateReading(){
+
+  const updateReading = () => {
+
+    if (
+      !porosity ||
+      !perm ||
+      !organic ||
+      !readingText
+    ) {
+      return;
+    }
+
 
     const p = Number(porosity.value);
     const k = Number(perm.value);
     const o = Number(organic.value);
 
-    let text;
 
-    if(k < 30){
+    let reading =
+      "Matriz compacta · flujo restringido";
 
-      text =
-        "Matriz compacta · flujo restringido";
 
-    }else if(k < 65){
+    if (k <= 20 && o >= 9) {
 
-      text =
-        "Permeabilidad intermedia · conectividad moderada";
-
-    }else{
-
-      text =
-        "Mayor conectividad conceptual · flujo favorecido";
+      reading =
+        "Baja permeabilidad · materia orgánica elevada";
 
     }
 
-    if(o >= 11){
+    else if (k > 60 && p > 12) {
 
-      text += " · alto contenido orgánico";
-
-    }else if(o >= 7){
-
-      text += " · materia orgánica significativa";
+      reading =
+        "Mayor capacidad de flujo · porosidad relativamente alta";
 
     }
 
-    document.getElementById("readingText")
-      .textContent = text;
+    else if (o >= 12) {
 
-  }
+      reading =
+        "Contenido orgánico alto · potencial generador";
+
+    }
+
+    else if (p >= 12) {
+
+      reading =
+        "Porosidad relativamente elevada · mayor espacio poral";
+
+    }
+
+    else if (k >= 40) {
+
+      reading =
+        "Permeabilidad intermedia · flujo menos restringido";
+
+    }
 
 
-  [porosity, perm, organic].forEach(slider => {
+    readingText.textContent = reading;
 
-    slider.oninput = updateReading;
+  };
+
+
+  [porosity, perm, organic].forEach(control => {
+
+    if (control) {
+
+      control.addEventListener(
+        "input",
+        updateReading
+      );
+
+    }
 
   });
 
 
-  /* =========================
-     QUIZ
-  ========================= */
+  updateReading();
 
-  const questions = [
 
-    [
-      "¿Qué es Vaca Muerta?",
-      [
-        "Una formación geológica",
-        "Una provincia",
-        "Un tipo de bomba",
-        "Un río"
+  // =========================================================
+  // 7. QUIZ
+  // =========================================================
+
+  const quizQuestions = [
+
+    {
+      question: "¿Qué es Vaca Muerta?",
+
+      answers: [
+        "Una formación geológica de la Cuenca Neuquina",
+        "Una ciudad de la Patagonia",
+        "Una empresa petrolera",
+        "Un tipo de perforación"
       ],
-      0
-    ],
 
-    [
-      "¿Por qué un recurso es considerado no convencional?",
-      [
-        "Porque está en otro país",
-        "Porque requiere técnicas específicas por la baja permeabilidad",
+      correct: 0
+    },
+
+
+    {
+      question: "¿Por qué un recurso shale requiere técnicas especiales?",
+
+      answers: [
+        "Porque está siempre en la superficie",
+        "Porque la roca presenta muy baja permeabilidad",
         "Porque no contiene hidrocarburos",
-        "Porque siempre está en superficie"
+        "Porque solamente existe en pozos verticales"
       ],
-      1
-    ],
 
-    [
-      "¿Qué permite el tramo horizontal?",
-      [
-        "Reducir la longitud del pozo",
-        "Aumentar el contacto con la formación objetivo",
-        "Eliminar la necesidad de perforar",
-        "Cambiar la edad de la roca"
-      ],
-      1
-    ],
+      correct: 1
+    },
 
-    [
-      "¿Qué busca la estimulación hidráulica?",
-      [
-        "Crear conductividad en la roca",
-        "Enfriar el yacimiento",
-        "Cambiar la composición del petróleo",
-        "Cerrar el pozo"
-      ],
-      0
-    ],
 
-    [
-      "¿En qué cuenca se encuentra Vaca Muerta?",
-      [
-        "Golfo San Jorge",
-        "Neuquina",
-        "Cuyana",
-        "Austral"
-      ],
-      1
-    ],
+    {
+      question: "¿Qué caracteriza a un pozo horizontal?",
 
-    [
-      "¿Qué estudia principalmente la geología del subsuelo?",
-      [
-        "La arquitectura y propiedades de las rocas",
-        "El tránsito urbano",
-        "La meteorología diaria",
-        "La electricidad domiciliaria"
+      answers: [
+        "Recorre una mayor longitud dentro de la formación objetivo",
+        "No tiene tramo vertical",
+        "Se perfora solamente desde una mina",
+        "No puede producir hidrocarburos"
       ],
-      0
-    ]
+
+      correct: 0
+    },
+
+
+    {
+      question: "¿Para qué se utiliza la estimulación hidráulica?",
+
+      answers: [
+        "Para enfriar la superficie",
+        "Para crear conductividad mediante fracturas en la roca",
+        "Para cambiar el nombre del pozo",
+        "Para medir la profundidad del terreno"
+      ],
+
+      correct: 1
+    },
+
+
+    {
+      question: "¿Qué provincia está directamente asociada al desarrollo de Vaca Muerta?",
+
+      answers: [
+        "Neuquén",
+        "Misiones",
+        "Jujuy",
+        "Santa Cruz"
+      ],
+
+      correct: 0
+    },
+
+
+    {
+      question: "¿Qué propiedad dificulta el flujo en una roca shale?",
+
+      answers: [
+        "Alta permeabilidad",
+        "Baja permeabilidad",
+        "Ausencia de sedimentos",
+        "Exceso de oxígeno"
+      ],
+
+      correct: 1
+    }
 
   ];
 
 
-  let questionIndex = 0;
-  let points = 0;
+  const qNumber =
+    document.getElementById("qNumber");
+
+  const scoreElement =
+    document.getElementById("score");
+
+  const questionElement =
+    document.getElementById("question");
+
+  const answersElement =
+    document.getElementById("answers");
+
+  const nextButton =
+    document.getElementById("next");
+
+  const resultElement =
+    document.getElementById("result");
+
+
+  let currentQuestion = 0;
+  let score = 0;
   let answered = false;
 
 
-  function renderQuestion(){
+  function renderQuestion() {
 
-    const q = questions[questionIndex];
+    if (
+      !qNumber ||
+      !scoreElement ||
+      !questionElement ||
+      !answersElement ||
+      !nextButton ||
+      !resultElement
+    ) {
+      return;
+    }
 
-    document.getElementById("qNumber").textContent =
-      `Pregunta ${questionIndex + 1} de ${questions.length}`;
 
-    document.getElementById("score").textContent =
-      points + " pts";
+    const q =
+      quizQuestions[currentQuestion];
 
-    document.getElementById("question").textContent =
-      q[0];
 
-    const answersContainer =
-      document.getElementById("answers");
+    qNumber.textContent =
+      `Pregunta ${currentQuestion + 1} de ${quizQuestions.length}`;
 
-    answersContainer.innerHTML = "";
 
-    q[1].forEach((answer, index) => {
+    scoreElement.textContent =
+      `${score} pts`;
 
-      const button = document.createElement("button");
 
-      button.className = "answer";
+    questionElement.textContent =
+      q.question;
 
-      button.textContent = answer;
 
-      button.onclick = () => {
+    answersElement.innerHTML = "";
 
-        chooseAnswer(button, index);
+    resultElement.textContent = "";
 
-      };
+    nextButton.disabled = true;
 
-      answersContainer.appendChild(button);
-
-    });
-
-    document.getElementById("result").textContent = "";
+    nextButton.style.opacity = "0.55";
 
     answered = false;
 
-    document.getElementById("next").style.display =
-      "inline-block";
+
+    q.answers.forEach((answer, index) => {
+
+      const button =
+        document.createElement("button");
+
+
+      button.className = "answer";
+
+      button.type = "button";
+
+      button.textContent = answer;
+
+
+      button.addEventListener("click", () => {
+
+        if (answered) return;
+
+        answered = true;
+
+
+        const allAnswers =
+          answersElement.querySelectorAll(".answer");
+
+
+        allAnswers.forEach(btn => {
+          btn.disabled = true;
+        });
+
+
+        if (index === q.correct) {
+
+          button.classList.add("correct");
+
+          score++;
+
+          scoreElement.textContent =
+            `${score} pts`;
+
+          resultElement.textContent =
+            "✓ Correcto";
+
+        }
+
+        else {
+
+          button.classList.add("wrong");
+
+          if (allAnswers[q.correct]) {
+            allAnswers[q.correct].classList.add("correct");
+          }
+
+          resultElement.textContent =
+            "✗ Incorrecto";
+
+        }
+
+
+        nextButton.disabled = false;
+
+        nextButton.style.opacity = "1";
+
+      });
+
+
+      answersElement.appendChild(button);
+
+    });
 
   }
 
 
-  function chooseAnswer(button, index){
+  if (
+    questionElement &&
+    answersElement &&
+    nextButton
+  ) {
 
-    if(answered) return;
-
-    answered = true;
-
-    const correct =
-      questions[questionIndex][2];
-
-    const buttons =
-      document.querySelectorAll(".answer");
-
-    buttons[correct].classList.add("correct");
+    renderQuestion();
 
 
-    if(index === correct){
+    nextButton.addEventListener("click", () => {
 
-      points++;
-
-      button.classList.add("correct");
-
-      document.getElementById("result").textContent =
-        "✓ Correcto. +1 punto";
-
-    }else{
-
-      button.classList.add("wrong");
-
-      document.getElementById("result").textContent =
-        "✕ No es esa. Mirá la respuesta marcada.";
-
-    }
-
-    document.getElementById("score").textContent =
-      points + " pts";
-
-  }
+      if (!answered) return;
 
 
-  document.getElementById("next").onclick = () => {
+      currentQuestion++;
 
-    if(!answered){
 
-      document.getElementById("result").textContent =
-        "Elegí una respuesta primero.";
+      if (
+        currentQuestion >= quizQuestions.length
+      ) {
 
-      return;
+        if (qNumber) {
+          qNumber.textContent =
+            "QUIZ COMPLETADO";
+        }
 
-    }
 
-    questionIndex++;
+        if (questionElement) {
 
-    if(questionIndex < questions.length){
+          questionElement.textContent =
+            `Resultado final: ${score} de ${quizQuestions.length} respuestas correctas.`;
+
+        }
+
+
+        if (answersElement) {
+          answersElement.innerHTML = "";
+        }
+
+
+        if (resultElement) {
+
+          if (
+            score === quizQuestions.length
+          ) {
+
+            resultElement.textContent =
+              "¡Excelente! Dominás los conceptos principales.";
+
+          }
+
+          else if (score >= 4) {
+
+            resultElement.textContent =
+              "¡Muy bien! Tenés una buena base sobre la cuenca.";
+
+          }
+
+          else {
+
+            resultElement.textContent =
+              "Buen comienzo. Volvé a recorrer las secciones y probá nuevamente.";
+
+          }
+
+        }
+
+
+        nextButton.textContent =
+          "Reiniciar quiz";
+
+        nextButton.disabled = false;
+
+        nextButton.style.opacity = "1";
+
+
+        nextButton.onclick = () => {
+
+          currentQuestion = 0;
+
+          score = 0;
+
+          nextButton.textContent =
+            "Siguiente →";
+
+          nextButton.onclick = null;
+
+          renderQuestion();
+
+        };
+
+
+        return;
+
+      }
+
 
       renderQuestion();
 
-    }else{
+    });
 
-      document.getElementById("question").textContent =
-        "¡Quiz terminado!";
-
-      document.getElementById("answers").innerHTML = "";
-
-      document.getElementById("next").style.display =
-        "none";
-
-      document.getElementById("result").textContent =
-        `Resultado final: ${points}/${questions.length}. ${
-          points >= 5
-          ? "Excelente dominio del tema."
-          : points >= 3
-          ? "Muy bien, ya tenés una buena base."
-          : "Repasá las secciones y probá de nuevo."
-        }`;
-
-      document.getElementById("qNumber").textContent =
-        "FINALIZADO";
-
-    }
-
-  };
+  }
 
 
-  renderQuestion();
-
-
-  /* =========================
-     EXPLICADOR GEOLÓGICO
-  ========================= */
-
-  const knowledge = {
-
-    shale:
-      "Shale es una roca sedimentaria de grano muy fino y baja permeabilidad. En sistemas no convencionales puede contener hidrocarburos que requieren técnicas específicas para ser producidos.",
-
-    fractura:
-      "La estimulación hidráulica consiste en inyectar un fluido a presión para generar una red de fracturas controladas que aumente la conductividad alrededor del pozo.",
-
-    horizontal:
-      "Un pozo horizontal desvía su trayectoria para recorrer una mayor longitud dentro de la formación objetivo y aumentar el contacto con el reservorio.",
-
-    "vaca muerta":
-      "Vaca Muerta es una formación geológica de la Cuenca Neuquina, reconocida por su riqueza orgánica y por su importancia en el desarrollo de petróleo y gas no convencional.",
-
-    cuenca:
-      "La Cuenca Neuquina es una cuenca sedimentaria del oeste argentino con una extensa historia geológica y gran importancia hidrocarburífera."
-
-  };
-
+  // =========================================================
+  // 8. EXPLICADOR GEOLÓGICO
+  // =========================================================
 
   const askInput =
     document.getElementById("askInput");
@@ -421,60 +613,217 @@ document.addEventListener("DOMContentLoaded", () => {
   const askBtn =
     document.getElementById("askBtn");
 
-  function askQuestion(){
-
-    const question =
-      askInput.value.toLowerCase();
-
-    const key =
-      Object.keys(knowledge)
-        .find(item => question.includes(item));
-
-    document.getElementById("askAnswer")
-      .textContent = key
-        ? knowledge[key]
-        : "Probá con: shale, fractura, pozo horizontal, Vaca Muerta o cuenca.";
-
-  }
+  const askAnswer =
+    document.getElementById("askAnswer");
 
 
-  askBtn.onclick = askQuestion;
+  const explanations = [
+
+    {
+      keywords: [
+        "shale",
+        "esquisto"
+      ],
+
+      answer:
+        "El shale es una roca sedimentaria de muy baja permeabilidad. Puede contener hidrocarburos en su matriz y requiere técnicas de desarrollo específicas para favorecer su flujo hacia el pozo."
+    },
 
 
-  askInput.onkeydown = event => {
+    {
+      keywords: [
+        "fractura",
+        "fracturación",
+        "fractura hidraulica",
+        "fractura hidráulica",
+        "hidraulica",
+        "hidráulica"
+      ],
 
-    if(event.key === "Enter"){
+      answer:
+        "La estimulación hidráulica utiliza un fluido presurizado para generar o reactivar fracturas en la formación, aumentando la conductividad y facilitando el flujo de hidrocarburos hacia el pozo."
+    },
 
-      askQuestion();
+
+    {
+      keywords: [
+        "horizontal",
+        "pozo horizontal"
+      ],
+
+      answer:
+        "Un pozo horizontal comienza con un tramo vertical y luego se desvía hasta recorrer una sección extensa dentro de la formación objetivo. Esto aumenta el contacto con la roca productiva."
+    },
+
+
+    {
+      keywords: [
+        "vaca muerta"
+      ],
+
+      answer:
+        "Vaca Muerta es una formación geológica de la Cuenca Neuquina, rica en materia orgánica y de muy baja permeabilidad, que contiene importantes recursos de petróleo y gas no convencionales."
+    },
+
+
+    {
+      keywords: [
+        "cuenca",
+        "neuquina"
+      ],
+
+      answer:
+        "La Cuenca Neuquina es una extensa cuenca sedimentaria del oeste argentino. Su evolución geológica generó un sistema petrolero de gran importancia, especialmente por el desarrollo de recursos no convencionales."
+    },
+
+
+    {
+      keywords: [
+        "permeabilidad"
+      ],
+
+      answer:
+        "La permeabilidad describe la capacidad de una roca para permitir el movimiento de fluidos a través de sus poros y conexiones. En el shale suele ser muy baja, lo que dificulta el flujo natural."
+    },
+
+
+    {
+      keywords: [
+        "porosidad"
+      ],
+
+      answer:
+        "La porosidad es la proporción del volumen de una roca que corresponde a espacios porales. Es importante porque esos espacios pueden almacenar fluidos, aunque porosidad y permeabilidad no significan lo mismo."
+    },
+
+
+    {
+      keywords: [
+        "materia organica",
+        "materia orgánica"
+      ],
+
+      answer:
+        "La materia orgánica presente en una roca generadora puede transformarse en hidrocarburos durante su evolución térmica. Su cantidad y madurez son variables importantes del sistema petrolero."
+    }
+
+  ];
+
+
+  function answerQuestion() {
+
+    if (!askInput || !askAnswer) return;
+
+
+    const query =
+      askInput.value.trim().toLowerCase();
+
+
+    if (!query) {
+
+      askAnswer.textContent =
+        "Escribí una palabra o una pregunta, por ejemplo: ¿qué es shale?";
+
+      return;
 
     }
 
-  };
+
+    const match =
+      explanations.find(item =>
+        item.keywords.some(keyword =>
+          query.includes(keyword)
+        )
+      );
 
 
-  /* =========================
-     QR
-  ========================= */
+    if (match) {
 
-  try{
+      askAnswer.textContent =
+        match.answer;
 
-    new QRCode(
-      document.getElementById("qrcode"),
-      {
-        text: location.href,
-        width:110,
-        height:110,
-        colorDark:"#111118",
-        colorLight:"#ffffff"
-      }
-    );
+    }
 
-  }catch(error){
+    else {
 
-    document.getElementById("qrcode")
-      .textContent = "QR";
+      askAnswer.textContent =
+        "No encontré esa palabra en el explicador rápido. Probá con: shale, fractura, pozo horizontal, Vaca Muerta, cuenca, permeabilidad, porosidad o materia orgánica.";
+
+    }
 
   }
 
+
+  if (askBtn) {
+
+    askBtn.addEventListener(
+      "click",
+      answerQuestion
+    );
+
+  }
+
+
+  if (askInput) {
+
+    askInput.addEventListener(
+      "keydown",
+      event => {
+
+        if (event.key === "Enter") {
+          answerQuestion();
+        }
+
+      }
+    );
+
+  }
+
+
+  // =========================================================
+  // 9. CÓDIGO QR
+  // =========================================================
+
+  const qrContainer =
+    document.getElementById("qrcode");
+
+
+  if (
+    qrContainer &&
+    typeof QRCode !== "undefined"
+  ) {
+
+    qrContainer.innerHTML = "";
+
+
+    new QRCode(qrContainer, {
+
+      text: window.location.href,
+
+      width: 110,
+
+      height: 110,
+
+      correctLevel: QRCode.CorrectLevel.M
+
+    });
+
+  }
+
+
+  // =========================================================
+  // 10. AÑO AUTOMÁTICO
+  // =========================================================
+
+  const yearElements =
+    document.querySelectorAll("[data-year]");
+
+
+  yearElements.forEach(element => {
+
+    element.textContent =
+      new Date().getFullYear();
+
+  });
 
 });
