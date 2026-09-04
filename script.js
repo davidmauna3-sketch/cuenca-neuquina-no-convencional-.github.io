@@ -928,4 +928,4 @@ window.addEventListener(
 
     }
 );
-<link rel="icon" type="image/png" href="favicon.png">
+<link rel="icon" type="favicon/png" href="favicon.png">
