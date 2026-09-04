@@ -287,13 +287,18 @@ nav a:hover{
   color:#777;
 }
 
+/* =========================================================
+   MAPA INTERACTIVO PROFESIONAL (ESTILOS CUSTOM)
+   ========================================================= */
+
 .map-card{
-  height:450px;
+  height:480px;
   border-radius:24px;
-  background:linear-gradient(145deg,#171520,#0e0e14);
+  background:#0d0d14;
   border:1px solid #2a2635;
   position:relative;
   overflow:hidden;
+  box-shadow:0 20px 40px rgba(0,0,0,0.4);
 }
 
 .map-glow{
@@ -302,81 +307,113 @@ nav a:hover{
   height:300px;
   background:#704cff;
   filter:blur(100px);
-  opacity:.16;
+  opacity:.12;
   right:-100px;
   top:-80px;
+  pointer-events:none;
+  z-index:2;
 }
 
-.arg-map{
+#mapa-cuenca{
+  width:100%;
+  height:100%;
+  z-index:1;
+  background:#09090e;
+}
+
+.map-controls{
   position:absolute;
-  inset:40px;
+  top:16px;
+  right:16px;
+  z-index:1000;
+  display:flex;
+  gap:8px;
 }
 
-.province{
-  position:absolute;
-  border:1px solid #6e5aa8;
-  color:#aaa;
-  background:#1b1822;
-  padding:13px 18px;
-  border-radius:9px;
-  font-size:10px;
-  font-weight:800;
-}
-
-.p-neuquen{
-  left:28%;
-  top:38%;
-  background:#50368b;
-  color:white;
-}
-
-.p-rio{
-  left:44%;
-  top:65%;
-}
-
-.p-mza{
-  left:13%;
-  top:18%;
-}
-
-.p-pampa{
-  left:63%;
-  top:32%;
-}
-
-.basin-zone{
-  position:absolute;
-  left:31%;
-  top:45%;
-  width:180px;
-  height:100px;
-  border:1px dashed #a789ff;
-  border-radius:50%;
-  display:grid;
-  place-items:center;
-  text-align:center;
-  color:#b99fff;
+.map-btn{
+  background:rgba(20, 18, 30, 0.85);
+  border:1px solid rgba(139, 99, 255, 0.4);
+  color:#fff;
+  padding:7px 13px;
+  border-radius:8px;
   font-size:11px;
-  letter-spacing:2px;
+  font-weight:700;
+  cursor:pointer;
+  backdrop-filter:blur(10px);
+  transition:all .2s ease;
 }
 
-.map-caption{
-  position:absolute;
-  bottom:20px;
-  left:22px;
+.map-btn:hover{
+  background:#8b63ff;
+  border-color:#8b63ff;
+}
+
+.map-btn.highlight{
+  background:rgba(139, 99, 255, 0.3);
+  border-color:#b49dff;
+}
+
+/* ESTILOS POPUPS Y TOOLTIPS LEAFLET */
+
+.leaflet-popup-content-wrapper{
+  background:#14131d;
+  color:#e0e0e8;
+  border:1px solid #3d3550;
+  border-radius:12px;
+  font-family:Inter, sans-serif;
+  box-shadow:0 10px 25px rgba(0,0,0,0.5);
+}
+
+.leaflet-popup-tip{
+  background:#14131d;
+}
+
+.map-popup-title{
+  font-family:'Space Grotesk', sans-serif;
+  color:#b49dff;
+  font-size:15px;
+  margin-bottom:6px;
+}
+
+.map-popup-desc{
+  font-size:12px;
+  color:#b0b0bc;
+  line-height:1.4;
+}
+
+.map-label-custom{
+  background:rgba(15, 14, 23, 0.85) !important;
+  border:1px solid #704cff !important;
+  color:#fff !important;
+  font-size:10px !important;
+  font-weight:700 !important;
+  border-radius:6px !important;
+  padding:2px 7px !important;
+  box-shadow:0 4px 10px rgba(0,0,0,0.4) !important;
+}
+
+.map-legend{
+  background:rgba(13, 13, 20, 0.88);
+  border:1px solid #2e283d;
+  padding:10px 14px;
+  border-radius:12px;
+  color:#ccc;
   font-size:11px;
-  color:#999;
+  line-height:1.8;
+  backdrop-filter:blur(8px);
 }
 
-.pulse{
+.map-legend-item{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.map-legend-color{
+  width:12px;
+  height:12px;
+  border-radius:3px;
   display:inline-block;
-  width:8px;
-  height:8px;
-  border-radius:50%;
-  background:#9c7dff;
-  margin-right:8px;
-  box-shadow:0 0 0 6px rgba(156,125,255,.12);
 }
 
 .timeline{
@@ -1121,7 +1158,7 @@ body.loaded #loader{
   }
 
   .map-card{
-    height:350px;
+    height:420px;
   }
 
   .facts,
