@@ -19,6 +19,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 
+  <!-- LEAFLET CSS (MAPA) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
   <link rel="stylesheet" href="style.css">
 </head>
 
@@ -172,33 +175,13 @@
 
       <div class="map-glow"></div>
 
-      <div class="arg-map">
+      <!-- MAPA INTERACTIVO PROFESIONAL (LEAFLET.JS) -->
+      <div id="mapa-cuenca"></div>
 
-        <div class="province p-neuquen">
-          NEUQUÉN
-        </div>
-
-        <div class="province p-rio">
-          RÍO NEGRO
-        </div>
-
-        <div class="province p-mza">
-          MENDOZA
-        </div>
-
-        <div class="province p-pampa">
-          LA PAMPA
-        </div>
-
-        <div class="basin-zone">
-          CUENCA<br>NEUQUINA
-        </div>
-
-      </div>
-
-      <div class="map-caption">
-        <span class="pulse"></span>
-        Área de interés de la Cuenca Neuquina
+      <!-- BOTONES DE NAVEGACIÓN Y ENFOQUE RÁPIDO -->
+      <div class="map-controls">
+        <button class="map-btn" id="btnFocusCuenca">🔍 Vista Cuenca</button>
+        <button class="map-btn highlight" id="btnFocusVaca">⚡ Zoom Vaca Muerta</button>
       </div>
 
     </div>
@@ -841,6 +824,8 @@
 
 </footer>
 
+<!-- LIBRERÍA DE LEAFLET JS PARA MAPA INTERACTIVO -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 <script src="script.js"></script>
