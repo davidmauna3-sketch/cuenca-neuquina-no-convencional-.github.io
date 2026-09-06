@@ -3,25 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <meta name="theme-color" content="#0b0b12">
   <meta name="description" content="Cuenca Neuquina No Convencional — sitio educativo para exposición y stand.">
-
   <title>Cuenca Neuquina | No Convencional</title>
 
-  <!-- FAVICON -->
   <link rel="icon" type="image/png" href="favicon.png">
   <link rel="shortcut icon" type="image/png" href="favicon.png">
   <link rel="apple-touch-icon" href="favicon.png">
 
-  <!-- FUENTES -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 
-  <!-- LEAFLET CSS (Cargado en el head para evitar estilos en blanco) -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
-
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+        crossorigin="">
   <link rel="stylesheet" href="style.css">
 </head>
 
@@ -33,7 +29,6 @@
 </div>
 
 <header class="topbar">
-
   <a class="brand" href="#inicio">
     <img src="favicon.png" alt="Logo Cuenca Neuquina">
     <span>
@@ -55,25 +50,16 @@
     <a href="#equipo">Equipo</a>
   </nav>
 
-  <button class="stand-btn" id="standBtn">
-    Modo Stand
-  </button>
-
+  <button class="stand-btn" id="standBtn">Modo Stand</button>
 </header>
-
 
 <main>
 
-<!-- HERO -->
 <section class="hero" id="inicio">
-
   <div class="hero-bg"></div>
 
   <div class="hero-content">
-
-    <p class="eyebrow">
-      GEOLOGÍA · ENERGÍA · INGENIERÍA
-    </p>
+    <p class="eyebrow">GEOLOGÍA · ENERGÍA · INGENIERÍA</p>
 
     <h1>
       CUENCA NEUQUINA<br>
@@ -87,15 +73,8 @@
     </p>
 
     <div class="hero-actions">
-
-      <a class="btn primary" href="#cuenca">
-        Explorar la cuenca ↓
-      </a>
-
-      <a class="btn ghost" href="#quiz">
-        Probar el quiz
-      </a>
-
+      <a class="btn primary" href="#cuenca">Explorar la cuenca ↓</a>
+      <a class="btn ghost" href="#quiz">Probar el quiz</a>
     </div>
 
     <div class="hero-tags">
@@ -104,36 +83,23 @@
       <span>Pozo horizontal</span>
       <span>Estimulación hidráulica</span>
     </div>
-
   </div>
 
-  <div class="hero-scroll">
-    SCROLL ↓
-  </div>
-
+  <div class="hero-scroll">SCROLL ↓</div>
 </section>
 
-
-<!-- CUENCA -->
 <section class="section intro" id="cuenca">
-
   <div class="section-head">
-
-    <p class="eyebrow">
-      01 — LA CUENCA
-    </p>
+    <p class="eyebrow">01 — LA CUENCA</p>
 
     <h2>
       ¿Qué es la <em>Cuenca Neuquina?</em>
     </h2>
-
   </div>
-
 
   <div class="two-col">
 
     <div class="text-block">
-
       <p class="lead">
         Es una extensa cuenca sedimentaria desarrollada principalmente
         en el oeste de Argentina.
@@ -150,7 +116,6 @@
       </p>
 
       <div class="mini-stats">
-
         <div>
           <strong>4</strong>
           <span>provincias<br>involucradas</span>
@@ -165,40 +130,73 @@
           <strong>2</strong>
           <span>etapas clave:<br>horizontal + fractura</span>
         </div>
-
       </div>
-
     </div>
-
 
     <div class="map-card">
 
       <div class="map-glow"></div>
 
-      <!-- MAPA INTERACTIVO PROFESIONAL (LEAFLET.JS) -->
-      <div id="mapa-cuenca"></div>
+      <div class="map-topbar">
+        <div>
+          <span class="map-kicker">VISOR GEOESPACIAL</span>
+          <strong>Cuenca Neuquina</strong>
+        </div>
 
-      <!-- BOTONES DE NAVEGACIÓN Y ENFOQUE RÁPIDO -->
-      <div class="map-controls">
-        <button class="map-btn" id="btnFocusCuenca">🔍 Vista Cuenca</button>
-        <button class="map-btn highlight" id="btnFocusVaca">⚡ Zoom Vaca Muerta</button>
+        <div class="map-live">
+          <span></span> DATOS CARTOGRÁFICOS
+        </div>
+      </div>
+
+      <div id="basinMap"
+           class="basin-map"
+           aria-label="Mapa interactivo de la Cuenca Neuquina y Vaca Muerta">
+      </div>
+
+      <div class="map-actions">
+        <button type="button" id="basinViewBtn" class="map-action active">
+          ◉ Vista Cuenca
+        </button>
+
+        <button type="button" id="vacaViewBtn" class="map-action">
+          ⚡ Zoom Vaca Muerta
+        </button>
+      </div>
+
+      <div class="map-legend">
+        <div>
+          <i class="legend-basin"></i>
+          <span>Límite esquemático Cuenca Neuquina</span>
+        </div>
+
+        <div>
+          <i class="legend-vaca"></i>
+          <span>Área de referencia Vaca Muerta</span>
+        </div>
+
+        <div>
+          <i class="legend-well"></i>
+          <span>Áreas / puntos de interés</span>
+        </div>
+      </div>
+
+      <div class="map-caption">
+        <span class="pulse"></span>
+        Exploración visual · límites representados de forma esquemática
+      </div>
+
+      <div class="map-source">
+        Base cartográfica · IGN / OpenStreetMap
       </div>
 
     </div>
-
   </div>
-
 </section>
 
-
-<!-- HISTORIA -->
 <section class="section dark" id="historia">
 
   <div class="section-head">
-
-    <p class="eyebrow">
-      02 — TIEMPO GEOLÓGICO
-    </p>
+    <p class="eyebrow">02 — TIEMPO GEOLÓGICO</p>
 
     <h2>
       Una historia escrita en <em>capas</em>
@@ -207,44 +205,79 @@
     <p>
       Seleccioná cada etapa para conocer su importancia.
     </p>
-
   </div>
-
 
   <div class="timeline">
-
-    <button class="time active" data-time="jur">
-      Jurásico
-    </button>
-
-    <button class="time" data-time="tit">
-      Tithoniano
-    </button>
-
-    <button class="time" data-time="ber">
-      Berriasiano
-    </button>
-
-    <button class="time" data-time="act">
-      Actualidad
-    </button>
-
+    <button class="time active" data-time="jur">Jurásico</button>
+    <button class="time" data-time="tit">Tithoniano</button>
+    <button class="time" data-time="ber">Berriasiano</button>
+    <button class="time" data-time="act">Actualidad</button>
   </div>
-
 
   <div class="time-panel">
 
-    <div class="time-visual">
+    <div class="time-visual"
+         aria-label="Corte geológico conceptual de la evolución de la Cuenca Neuquina">
 
-      <div class="layer l1"></div>
-      <div class="layer l2"></div>
-      <div class="layer l3"></div>
-      <div class="layer l4"></div>
+      <div class="geo-hud">
+        <span class="hud-dot"></span>
+        CORTE GEOLÓGICO · MODELO EDUCATIVO
+      </div>
 
-      <span>SUBSUPERFICIE</span>
+      <div class="geo-surface">
+        <span>NIVEL DEL TERRENO</span>
+      </div>
+
+      <div class="geo-horizon horizon-1"></div>
+      <div class="geo-horizon horizon-2"></div>
+      <div class="geo-horizon horizon-3"></div>
+      <div class="geo-horizon horizon-4"></div>
+
+      <div class="geo-layer layer-overburden">
+        <span>SEDIMENTOS SUPERIORES</span>
+      </div>
+
+      <div class="geo-layer layer-source">
+        <span>FORMACIÓN VACA MUERTA</span>
+        <small>ROCA GENERADORA · MATERIA ORGÁNICA</small>
+      </div>
+
+      <div class="geo-layer layer-deep">
+        <span>UNIDADES PROFUNDAS</span>
+      </div>
+
+      <div class="geo-basement">
+        <span>BASAMENTO</span>
+      </div>
+
+      <div class="geo-well">
+        <div class="well-head"></div>
+        <div class="well-line"></div>
+        <div class="well-target"></div>
+      </div>
+
+      <div class="geo-callout callout-sediments">
+        <i></i>
+        <span>Capas sedimentarias</span>
+      </div>
+
+      <div class="geo-callout callout-source">
+        <i></i>
+        <span>Roca generadora</span>
+      </div>
+
+      <div class="geo-depth">
+        <span>TERRENO</span>
+        <span>SUBSUELO</span>
+      </div>
+
+      <div class="geo-scale">
+        <span>MODELO CONCEPTUAL</span>
+        <b></b>
+        <small>No representa espesores reales</small>
+      </div>
 
     </div>
-
 
     <div class="time-copy">
 
@@ -265,35 +298,24 @@
     </div>
 
   </div>
-
 </section>
 
-
-<!-- GEOLOGÍA -->
 <section class="section" id="geologia">
 
   <div class="section-head">
-
-    <p class="eyebrow">
-      03 — GEOLOGÍA
-    </p>
+    <p class="eyebrow">03 — GEOLOGÍA</p>
 
     <h2>
       Del subsuelo al <em>reservorio</em>
     </h2>
-
   </div>
-
 
   <div class="geo-grid">
 
     <article class="geo-card big">
-
       <span class="number">01</span>
 
-      <h3>
-        Roca generadora
-      </h3>
+      <h3>Roca generadora</h3>
 
       <p>
         Las rocas ricas en materia orgánica pueden conservar
@@ -307,71 +329,50 @@
         <i></i>
         <i></i>
       </div>
-
     </article>
 
-
     <article class="geo-card">
-
       <span class="number">02</span>
 
-      <h3>
-        Baja permeabilidad
-      </h3>
+      <h3>Baja permeabilidad</h3>
 
       <p>
         El fluido no se desplaza con facilidad por la matriz
         de la roca. Por eso la extracción convencional no
         resulta suficiente.
       </p>
-
     </article>
 
-
     <article class="geo-card">
-
       <span class="number">03</span>
 
-      <h3>
-        Madurez térmica
-      </h3>
+      <h3>Madurez térmica</h3>
 
       <p>
         La historia de enterramiento y temperatura condiciona
         la generación y preservación de hidrocarburos.
       </p>
-
     </article>
 
-
     <article class="geo-card">
-
       <span class="number">04</span>
 
-      <h3>
-        Trampa y sello
-      </h3>
+      <h3>Trampa y sello</h3>
 
       <p>
         La arquitectura estratigráfica y las propiedades
         de las rocas controlan la distribución de los fluidos.
       </p>
-
     </article>
 
   </div>
-
 </section>
 
-
-<!-- VACA MUERTA -->
 <section class="section dark feature" id="vaca">
 
   <div class="feature-copy">
 
-    <p class="eyebrow">
-      04 — VACA MUERTA
-    </p>
+    <p class="eyebrow">04 — VACA MUERTA</p>
 
     <h2>
       Una formación clave del
@@ -383,7 +384,6 @@
       reconocida por su riqueza orgánica y por su importancia para
       el desarrollo de petróleo y gas no convencional.
     </p>
-
 
     <div class="facts">
 
@@ -398,255 +398,181 @@
       </div>
 
       <div>
-        <b>Extensa</b>
-        <span>desarrollo regional</span>
+        <b>Profunda</b>
+        <span>desarrollo mediante pozos</span>
       </div>
 
     </div>
 
   </div>
 
+  <div class="feature-visual">
+    <div class="formation-ring ring-1"></div>
+    <div class="formation-ring ring-2"></div>
+    <div class="formation-ring ring-3"></div>
 
-  <div class="core">
-
-    <div class="core-title">
-      CORTE GEOLÓGICO
+    <div class="formation-core">
+      <span>VM</span>
+      <small>FORMACIÓN</small>
     </div>
-
-    <div class="core-layers">
-
-      <span>COBERTURA</span>
-
-      <span>FORMACIONES SUPERIORES</span>
-
-      <strong>VACA MUERTA</strong>
-
-      <span>FORMACIONES INFERIORES</span>
-
-    </div>
-
-    <div class="core-oil"></div>
-
   </div>
 
 </section>
 
-
-<!-- PROCESO -->
 <section class="section" id="proceso">
 
   <div class="section-head">
 
-    <p class="eyebrow">
-      05 — DESARROLLO DEL POZO
-    </p>
+    <p class="eyebrow">05 — DESARROLLO</p>
 
     <h2>
-      ¿Cómo se extrae un recurso
-      <em>no convencional?</em>
+      Del pozo vertical al
+      <em>tramo horizontal</em>
     </h2>
 
   </div>
 
+  <div class="process-grid">
 
-  <div class="process">
-
-    <article>
-      <b>01</b>
-      <h3>Perforación</h3>
+    <article class="process-card">
+      <span>01</span>
+      <h3>Perforación vertical</h3>
       <p>
-        Se construye el pozo atravesando las capas hasta
-        alcanzar la formación objetivo.
+        El pozo atraviesa las distintas unidades hasta alcanzar
+        la profundidad de la formación objetivo.
       </p>
     </article>
 
-
-    <article>
-      <b>02</b>
-      <h3>Horizontal</h3>
+    <article class="process-card">
+      <span>02</span>
+      <h3>Desviación</h3>
       <p>
-        El tramo del pozo se desvía para recorrer una mayor
-        longitud dentro de la formación.
+        La trayectoria comienza a cambiar progresivamente
+        hasta orientar el pozo hacia la zona productiva.
       </p>
     </article>
 
+    <article class="process-card">
+      <span>03</span>
+      <h3>Tramo horizontal</h3>
+      <p>
+        El pozo recorre una longitud importante dentro de
+        la formación para aumentar el contacto con la roca.
+      </p>
+    </article>
 
-    <article>
-      <b>03</b>
+    <article class="process-card">
+      <span>04</span>
       <h3>Estimulación</h3>
       <p>
-        Se aplican tratamientos hidráulicos para crear
-        conductividad en la roca.
-      </p>
-    </article>
-
-
-    <article>
-      <b>04</b>
-      <h3>Producción</h3>
-      <p>
-        Los fluidos ingresan al pozo y son conducidos
-        a superficie para su tratamiento.
+        Se genera conductividad mediante fracturas hidráulicas
+        que permiten favorecer el flujo hacia el pozo.
       </p>
     </article>
 
   </div>
 
-
-  <div class="well-demo">
-
-    <div class="surface"></div>
-
-    <div class="well-vertical"></div>
-
-    <div class="well-horizontal"></div>
-
-    <div class="frac f1"></div>
-    <div class="frac f2"></div>
-    <div class="frac f3"></div>
-
-    <label>SUPERFICIE</label>
-    <label class="target">VACA MUERTA</label>
-
-
-    <div class="depth-control">
-
-      <span>Profundidad visual</span>
-
-      <input
-        id="depth"
-        type="range"
-        min="30"
-        max="90"
-        value="65"
-      >
-
-      <strong id="depthValue">
-        65%
-      </strong>
-
-    </div>
-
-  </div>
-
 </section>
 
-
-<!-- DATOS -->
-<section class="section stats dark" id="datos">
+<section class="section dark" id="datos">
 
   <div class="section-head">
 
-    <p class="eyebrow">
-      06 — DATOS CLAVE
-    </p>
+    <p class="eyebrow">06 — DATOS INTERACTIVOS</p>
 
     <h2>
-      La cuenca en <em>números</em>
+      Explorá el comportamiento de la
+      <em>roca</em>
     </h2>
 
   </div>
 
+  <div class="data-lab">
 
-  <div class="stat-grid">
+    <div class="lab-controls">
 
-    <div class="stat">
-      <strong>4</strong>
-      <span>
-        provincias<br>
-        involucradas
-      </span>
-    </div>
+      <div class="control-row">
+        <label for="depth">
+          Profundidad conceptual
+          <strong id="depthValue">50%</strong>
+        </label>
 
-    <div class="stat">
-      <strong>≈150+</strong>
-      <span>
-        millones de años<br>
-        de evolución geológica
-      </span>
-    </div>
+        <input
+          id="depth"
+          type="range"
+          min="10"
+          max="100"
+          value="50">
+      </div>
 
-    <div class="stat">
-      <strong>≈35.000</strong>
-      <span>
-        km² de referencia<br>
-        para Vaca Muerta
-      </span>
-    </div>
+      <div class="control-row">
+        <label for="porosity">
+          Porosidad
+          <strong id="porosityValue">10%</strong>
+        </label>
 
-    <div class="stat">
-      <strong>2</strong>
-      <span>
-        técnicas clave<br>
-        horizontal + estimulación
-      </span>
-    </div>
+        <input
+          id="porosity"
+          type="range"
+          min="1"
+          max="20"
+          value="10">
+      </div>
 
-  </div>
+      <div class="control-row">
+        <label for="perm">
+          Permeabilidad
+          <strong id="permValue">20 mD</strong>
+        </label>
 
-</section>
+        <input
+          id="perm"
+          type="range"
+          min="1"
+          max="100"
+          value="20">
+      </div>
 
+      <div class="control-row">
+        <label for="organic">
+          Materia orgánica
+          <strong id="organicValue">8%</strong>
+        </label>
 
-<!-- LABORATORIO -->
-<section class="section lab">
+        <input
+          id="organic"
+          type="range"
+          min="1"
+          max="15"
+          value="8">
+      </div>
 
-  <div class="section-head">
-
-    <p class="eyebrow">
-      07 — LABORATORIO
-    </p>
-
-    <h2>
-      Leé el <em>subsuelo</em>
-    </h2>
-
-    <p>
-      Mové los controles para explorar propiedades de una roca
-      reservorio de forma didáctica.
-    </p>
-
-  </div>
-
-
-  <div class="lab-grid">
-
-    <div class="sample">
-
-      <div class="sample-rock"></div>
-
-      <div class="magnifier"></div>
-
-    </div>
-
-
-    <div class="controls">
-
-      <label>
-        Porosidad
-        <input id="porosity" type="range" min="1" max="20" value="8">
-      </label>
-
-      <label>
-        Permeabilidad
-        <input id="perm" type="range" min="1" max="100" value="20">
-      </label>
-
-      <label>
-        Materia orgánica
-        <input id="organic" type="range" min="1" max="15" value="9">
-      </label>
-
-
-      <div class="reading">
-
-        <span>
-          Lectura conceptual
-        </span>
-
+      <div class="lab-reading">
+        <span>LECTURA</span>
         <strong id="readingText">
           Matriz compacta · flujo restringido
         </strong>
+      </div>
 
+    </div>
+
+    <div class="lab-visual">
+
+      <div class="well-surface">
+        SUPERFICIE
+      </div>
+
+      <div class="well-vertical"></div>
+
+      <div class="well-horizontal"></div>
+
+      <div class="frac frac-1"></div>
+      <div class="frac frac-2"></div>
+      <div class="frac frac-3"></div>
+      <div class="frac frac-4"></div>
+
+      <div class="target-zone">
+        VACA MUERTA
       </div>
 
     </div>
@@ -655,152 +581,116 @@
 
 </section>
 
-
-<!-- QUIZ -->
-<section class="section dark" id="quiz">
+<section class="section" id="quiz">
 
   <div class="section-head">
 
-    <p class="eyebrow">
-      08 — INTERACTIVO
-    </p>
+    <p class="eyebrow">07 — QUIZ</p>
 
     <h2>
-      ¿Cuánto sabés de la
-      <em>Cuenca Neuquina?</em>
+      ¿Cuánto sabés de
+      <em>Vaca Muerta?</em>
     </h2>
 
   </div>
 
-
-  <div class="quiz" id="quizBox">
+  <div class="quiz-card">
 
     <div class="quiz-top">
-
-      <span id="qNumber">
-        Pregunta 1 de 6
-      </span>
-
-      <span id="score">
-        0 pts
-      </span>
-
+      <span id="qNumber">Pregunta 1 de 6</span>
+      <strong id="score">0 pts</strong>
     </div>
-
 
     <h3 id="question">
       ¿Qué es Vaca Muerta?
     </h3>
 
+    <div id="answers" class="answers"></div>
 
-    <div id="answers"></div>
-
-
-    <button class="btn primary next" id="next">
-      Siguiente →
-    </button>
-
-
-    <div class="result" id="result"></div>
-
-  </div>
-
-</section>
-
-
-<!-- ASISTENTE -->
-<section class="section assistant">
-
-  <div class="assistant-box">
-
-    <div>
-
-      <p class="eyebrow">
-        EXPLICADOR RÁPIDO
-      </p>
-
-      <h2>
-        Preguntale al <em>geólogo</em>
-      </h2>
-
-      <p>
-        Escribí una palabra como:
-        <b>shale</b>,
-        <b>fractura</b>,
-        <b>pozo horizontal</b>,
-        <b>Vaca Muerta</b>
-        o <b>cuenca</b>.
-      </p>
-
-    </div>
-
-
-    <div class="ask">
-
-      <input
-        id="askInput"
-        placeholder="Ej.: ¿qué es shale?"
-      >
-
-      <button id="askBtn" class="btn primary">
-        Responder
+    <div class="quiz-bottom">
+      <span id="result"></span>
+      <button id="next" type="button">
+        Siguiente →
       </button>
-
-      <div id="askAnswer">
-        Acá aparece una explicación breve y didáctica.
-      </div>
-
     </div>
 
   </div>
 
 </section>
 
-
-<!-- EQUIPO -->
-<section class="section team" id="equipo">
+<section class="section dark" id="equipo">
 
   <div class="section-head">
 
-    <p class="eyebrow">
-      09 — EQUIPO
-    </p>
+    <p class="eyebrow">08 — EQUIPO</p>
 
     <h2>
-      Detrás del <em>stand</em>
+      Trabajo de
+      <em>investigación</em>
     </h2>
 
   </div>
 
-
   <div class="team-grid">
 
-    <div>Álvaro Ortega</div>
-    <div>Josias Aranda</div>
-    <div>David Mauna</div>
-    <div>Eugenio Jesús Jiménez Robles</div>
-    <div>Adriel Sebastián Mestre Merfa</div>
-    <div>Karen Leonela Esquivel</div>
+    <article class="team-card">
+      <span>01</span>
+      <h3>Gabriel Gonzalez</h3>
+      <p>Investigación y desarrollo del proyecto.</p>
+    </article>
+
+    <article class="team-card">
+      <span>02</span>
+      <h3>David Mauna</h3>
+      <p>Investigación, diseño y desarrollo del sitio.</p>
+    </article>
+
+    <article class="team-card">
+      <span>03</span>
+      <h3>Alvaro Ortega</h3>
+      <p>Investigación y desarrollo del proyecto.</p>
+    </article>
 
   </div>
 
-
-  <div class="qr-card">
+  <div class="ask-box">
 
     <div>
-
-      <p class="eyebrow">
-        COMPARTÍ EL SITIO
-      </p>
+      <p class="eyebrow">EXPLICADOR RÁPIDO</p>
 
       <h3>
-        QR del proyecto
+        Preguntale algo sobre
+        <em>geología</em>
       </h3>
+    </div>
 
-      <p>
-        Escaneá para abrir esta página desde el celular.
-      </p>
+    <div class="ask-controls">
 
+      <input
+        id="askInput"
+        type="text"
+        placeholder="Ej.: ¿Qué es shale?">
+
+      <button id="askBtn" type="button">
+        Consultar
+      </button>
+
+    </div>
+
+    <div id="askAnswer" class="ask-answer">
+      Escribí una palabra o una pregunta para comenzar.
+    </div>
+
+  </div>
+
+  <div class="qr-section">
+
+    <div>
+      <p class="eyebrow">COMPARTIR</p>
+
+      <h3>
+        Escaneá para abrir el sitio
+      </h3>
     </div>
 
     <div id="qrcode"></div>
@@ -811,22 +701,25 @@
 
 </main>
 
+<footer class="footer">
 
-<footer>
+  <div>
+    <strong>CUENCA NEUQUINA</strong>
+    <span>NO CONVENCIONAL</span>
+  </div>
 
-  <span>
-    CUENCA NEUQUINA · NO CONVENCIONAL
-  </span>
-
-  <a href="#inicio">
-    Volver arriba ↑
-  </a>
+  <p>
+    Proyecto educativo · Geología · Petróleo y Gas
+  </p>
 
 </footer>
 
-<!-- LIBRERÍAS CARGADAS AL FINAL DE BODY CON ATRIBUTO INTEGRITY -->
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+        crossorigin=""></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
 <script src="script.js"></script>
 
 </body>
