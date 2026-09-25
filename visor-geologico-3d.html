@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visor Geológico 3D - Columna Estratigráfica Cuenca Neuquina</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Three.js and OrbitControls -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background-color: #050811;
+            color: #f1f5f9;
+            overflow: hidden;
+        }
+        .code-font {
+            font-family: 'JetBrains Mono', monospace;
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #090d16;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #334155;
+        }
+        /* Glassmorphism Panels */
+        .glass-panel {
+            background: rgba(10, 16, 30, 0.82);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+        .glass-item {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glass-item:hover {
+            background: rgba(30, 41, 59, 0.8);
+            border-color: rgba(56, 189, 248, 0.3);
+            transform: translateX(2px);
+        }
+        .glass-item.active {
+            background: linear-gradient(90deg, rgba(14, 165, 233, 0.2) 0%, rgba(15, 23, 42, 0.9) 100%);
+            border-left: 4px solid #38bdf8;
+            border-color: rgba(56, 189, 248, 0.4);
+        }
+        /* Glow animations */
+        .glow-vaca-muerta {
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
+            border-color: #38bdf8 !important;
+        }
+    </style>
+</head>
+<body class="h-screen w-screen relative select-none">
+
+    <!-- 3D Canvas -->
+    <div id="canvas-container" class="absolute inset-0 w-full h-full z-0 cursor-grab active:cursor-grabbing"></div>
+
+    <!-- Top Header -->
+    <header class="absolute top-0 left-0 w-full z-10 p-4 pointer-events-none flex flex-col sm:flex-row justify-between items-start gap-4">
+        <div class="glass-panel rounded-2xl p-4 pointer-events-auto max-w-lg">
+            <div class="flex items-center space-x-3 mb-1">
+                <div class="w-3 h-3 rounded-full bg-cyan-400 animate-pulse"></div>
+                <h1 class="text-lg font-bold tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-sky-300 to-amber-300">
+                    CUENCA NEUQUINA — COLUMNA ESTRATIGRÁFICA 3D
+                </h1>
+            </div>
+            <p class="text-xs text-slate-400 leading-relaxed">
+                Modelo geológico tridimensional interactivo con las <span class="text-cyan-300 font-semibold">11 unidades estratigráficas</span> completas del subsuelo. Haz clic en cualquier capa para explorar su composición.
+            </p>
+        </div>
+
+        <!-- View Controls Bar -->
+        <div class="glass-panel rounded-2xl p-2 pointer-events-auto flex items-center space-x-2">
+            <button id="btn-explode" onclick="toggleExplodeView()" class="glass-item px-3 py-2 rounded-xl text-xs flex items-center space-x-2 text-slate-200">
+                <i data-lucide="layers-3" class="w-4 h-4 text-cyan-400"></i>
+                <span>Vista Expandida</span>
+            </button>
+            <button id="btn-cutaway" onclick="toggleCutaway()" class="glass-item px-3 py-2 rounded-xl text-xs flex items-center space-x-2 text-slate-200">
+                <i data-lucide="scissors" class="w-4 h-4 text-amber-400"></i>
+                <span>Corte Transversal</span>
+            </button>
+            <button onclick="resetCamera()" class="glass-item p-2 rounded-xl text-slate-300" title="Reiniciar Cámara">
+                <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Left Panel: 11 Stratigraphic Layers List -->
+    <div class="absolute top-28 left-4 z-10 w-80 max-h-[calc(100vh-8.5rem)] pointer-events-none flex flex-col">
+        <div class="glass-panel rounded-2xl p-4 pointer-events-auto flex flex-col h-full overflow-hidden">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-800 shrink-0">
+                <div class="flex items-center space-x-2">
+                    <i data-lucide="list-ordered" class="w-4 h-4 text-cyan-400"></i>
+                    <h2 class="text-xs font-bold tracking-wider uppercase text-slate-200">Unidades Geológicas (11)</h2>
+                </div>
+                <span class="text-[10px] px-2 py-0.5 rounded bg-slate-900 text-slate-400 code-font">SUPERFICIE ➔ BASE</span>
+            </div>
+
+            <!-- Scrollable 11 layers list -->
+            <div id="layers-list" class="space-y-1.5 mt-3 overflow-y-auto pr-1">
+                <!-- Javascript will dynamically inject the 11 items here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Panel: Detailed Layer Inspector -->
+    <div class="absolute top-28 right-4 z-10 w-80 lg:w-96 pointer-events-none">
+        <div class="glass-panel rounded-2xl p-5 pointer-events-auto space-y-4">
+            <!-- Header Badge -->
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                <div class="flex items-center space-x-2">
+                    <span id="inspect-num" class="w-6 h-6 rounded-full bg-cyan-500/20 text-cyan-400 border border-cyan-500/40 code-font text-xs flex items-center justify-center font-bold">11</span>
+                    <span class="text-xs font-semibold tracking-wider text-slate-300 uppercase">Detalle de la Capa</span>
+                </div>
+                <span id="inspect-tag" class="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 code-font">Acuífero / Superficie</span>
+            </div>
+
+            <!-- Layer Title & Description -->
+            <div class="space-y-2">
+                <h3 id="inspect-title" class="text-lg font-bold text-cyan-300 leading-tight">Superficie actual + Napa freática</h3>
+                <p id="inspect-desc" class="text-xs text-slate-300 leading-relaxed">
+                    Cubierta superficial árida del paisaje patagónico. Alberga el acuífero freático somero de agua dulce que requiere estricta protección ambiental mediante tuberías de revestimiento cementadas.
+                </p>
+            </div>
+
+            <!-- Data Specifications Grid -->
+            <div class="grid grid-cols-2 gap-2 pt-1 code-font text-xs">
+                <div class="bg-slate-950/70 p-2.5 rounded-xl border border-slate-800/80">
+                    <span class="text-[10px] text-slate-500 block">PROFUNDIDAD TIPICA</span>
+                    <span id="inspect-depth" class="font-semibold text-slate-200">0 - 200 m</span>
+                </div>
+                <div class="bg-slate-950/70 p-2.5 rounded-xl border border-slate-800/80">
+                    <span class="text-[10px] text-slate-500 block">EDAD GEOLÓGICA</span>
+                    <span id="inspect-age" class="font-semibold text-slate-200">Cuaternario (0 Ma)</span>
+                </div>
+                <div class="bg-slate-950/70 p-2.5 rounded-xl border border-slate-800/80 col-span-2">
+                    <span class="text-[10px] text-slate-500 block">LITOLOGÍA Y ROCAS</span>
+                    <span id="inspect-litho" class="font-semibold text-amber-300">Suelos aluviales, limos, gravas y arenas</span>
+                </div>
+            </div>
+
+            <!-- Key Content / Resources Found -->
+            <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-800/80 space-y-1">
+                <div class="flex items-center space-x-1.5 text-xs text-emerald-400 font-semibold">
+                    <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+                    <span>¿Qué se encuentra en esta capa?</span>
+                </div>
+                <p id="inspect-content" class="text-xs text-slate-300 leading-normal">
+                    Reservas de agua dulce freática, suelos fértiles de valles e infraestructura de superficie.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Help Hint -->
+    <div class="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-10 pointer-events-none">
+        <div class="glass-panel px-4 py-2 rounded-full text-xs text-slate-400 flex items-center space-x-2">
+            <i data-lucide="mouse-pointer-click" class="w-3.5 h-3.5 text-cyan-400"></i>
+            <span>Arrastra para rotar | Rueda del mouse para Zoom | Haz clic sobre cualquier capa 3D</span>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // Array defining the exact 11 Geological Layers of Neuquén Basin (Top to Bottom)
+        const geologicalLayersData = [
+            {
+                num: 11,
+                id: "layer-11",
+                name: "Superficie actual + Napa freática",
+                badge: "Acuífero Somero",
+                color: "#22c55e", // Green top
+                hexColor: 0x22c55e,
+                height: 1.2,
+                depth: "0 - 150 m",
+                age: "Cuaternario (Actualidad)",
+                litho: "Suelos eólicos, depósitos aluviales, gravas y arenas",
+                content: "Acuíferos freáticos de agua dulce. Requiere aislamiento hidrogeológico total.",
+                desc: "Capa superficial del relieve patagónico actual. Aloja las napas de agua dulce utilizadas para vida y agricultura, protegidas por las primeras columnas de casing en pozos.",
+                textureType: "surface"
+            },
+            {
+                num: 10,
+                id: "layer-10",
+                name: "Grupo Neuquén (\"Capas Rojas\")",
+                badge: "Continental Red Beds",
+                color: "#ef4444", // Red
+                hexColor: 0xd97706,
+                height: 2.5,
+                depth: "150 - 900 m",
+                age: "Cretácico Superior (~90 Ma)",
+                litho: "Areniscas y arcillitas fluviales de intenso color rojo",
+                content: "Fósiles masivos de dinosaurios (p. ej. Argentinosaurus), acuíferos profundos y canteras.",
+                desc: "Secuencia continental fluvial y desértica caracterizada por rocas de color rojo óxido intenso. Famosa mundialmente por sus abundantes hallazgos paleontológicos.",
+                textureType: "redbeds"
+            },
+            {
+                num: 9,
+                id: "layer-9",
+                name: "Fm. Huitrín / Fm. Rayoso",
+                badge: "Evaporitas y Sales",
+                color: "#f43f5e", // Pinkish red
+                hexColor: 0xe11d48,
+                height: 2.0,
+                depth: "900 - 1,400 m",
+                age: "Cretácico Inferior (~110 Ma)",
+                litho: "Yeso, anhidrita, halita (sal) y arcillitas rosadas",
+                content: "Capas de sal gema, yeso industrial y trampas evaporíticas impermeables.",
+                desc: "Depósitos formados por la desecación y evaporación repetida de mares someros. Las espesas capas de sal funcionan como sello geológico plástico regional.",
+                textureType: "evaporite"
+            },
+            {
+                num: 8,
+                id: "layer-8",
+                name: "Fm. Mulichinco / Fm. Agrio",
+                badge: "Reservorio Convencional",
+                color: "#eab308", // Yellow beige
+                hexColor: 0xca8a04,
+                height: 2.2,
+                depth: "1,400 - 2,100 m",
+                age: "Cretácico Inferior (~130 Ma)",
+                litho: "Areniscas porosas y lutitas marinas oscuras",
+                content: "Yacimientos convencionales de Petróleo y Gas natural, amonites fósiles.",
+                desc: "Alternancia de deltas marinos y capas ricas en fósiles marinos. Una de las formaciones históricas más productivas para yacimientos de hidrocarburos convencionales.",
+                textureType: "sandstone"
+            },
+            {
+                num: 7,
+                id: "layer-7",
+                name: "Formación Quintuco",
+                badge: "Sello Carbonático",
+                color: "#d97706", // Light beige / limestone
+                hexColor: 0xb45309,
+                height: 1.8,
+                depth: "2,100 - 2,500 m",
+                age: "Berriasiano - Valanginiano (~138 Ma)",
+                litho: "Calizas, margas y carbonatos compactos beige",
+                content: "Roca sello carbonática impenetrable justo encima de Vaca Muerta.",
+                desc: "Plataforma de calizas y rocas carbonáticas depositadas en un mar cálido. Forma la cobertura o sello directo superior sobre la formación Vaca Muerta.",
+                textureType: "limestone"
+            },
+            {
+                num: 6,
+                id: "layer-6",
+                name: "Formación Vaca Muerta",
+                badge: "Roca Madre (Shale Oil/Gas)",
+                color: "#38bdf8", // Glowing Cyan / Dark Black
+                hexColor: 0x0f172a,
+                height: 3.2, // Highlighted thicker
+                depth: "2,500 - 3,100 m",
+                age: "Tithoniano - Berriasiano (~150 Ma)",
+                litho: "Lutitas orgánicas marrones oscuras a negras laminadas",
+                content: "Enormes reservas de SHALE OIL y SHALE GAS (TOC 3% al 10%). Objetivo principal no convencional.",
+                desc: "La roca madre estrella de la cuenca. Sedimentada en un fondo marino anóxico sin oxígeno, preservando microalgas y materia orgánica que generó el petróleo de la región.",
+                textureType: "vacaMuerta"
+            },
+            {
+                num: 5,
+                id: "layer-5",
+                name: "Fm. Tordillo / Catriel",
+                badge: "Reservorio Arenisco",
+                color: "#c2410c", // Red-brown
+                hexColor: 0x9a3412,
+                height: 1.6,
+                depth: "3,100 - 3,400 m",
+                age: "Kimmeridgiano (~155 Ma)",
+                litho: "Areniscas eólicas dunas y conglomerados fluviales",
+                content: "Reservorio convencional profundo de gas y condensado.",
+                desc: "Antiguos campos de dunas eólicas y ríos torrenciales continentales previos a la gran ingresión marina de Vaca Muerta.",
+                textureType: "redbeds"
+            },
+            {
+                num: 4,
+                id: "layer-4",
+                name: "Fm. Auquilco (Yeso Principal)",
+                badge: "Evaporita Blanca",
+                color: "#f8fafc", // White/Grayish
+                hexColor: 0xe2e8f0,
+                height: 1.4,
+                depth: "3,400 - 3,650 m",
+                age: "Oxfordiano (~160 Ma)",
+                litho: "Anhidrita y yeso masivo blanco cristalino",
+                content: "Capa blanca pura de yeso anhidrita de gran espesor.",
+                desc: "Evaporita pura de color blanco a gris claro muy distintiva en los registros de pozos. Marcador estratigráfico clave en toda la cuenca.",
+                textureType: "gypsum"
+            },
+            {
+                num: 3,
+                id: "layer-3",
+                name: "Grupo Cuyo (Los Molles / Lajas)",
+                badge: "Sistema Jurásico",
+                color: "#64748b", // Slate gray
+                hexColor: 0x475569,
+                height: 2.2,
+                depth: "3,650 - 4,300 m",
+                age: "Jurásico Temprano a Medio (~175 Ma)",
+                litho: "Lutitas marinas oscuras y areniscas deltaicas",
+                content: "Segunda roca madre (Los Molles) y gas tight en Fm. Lajas.",
+                desc: "Gran ciclo marino y deltaico jurásico. Contiene la formación Los Molles, que es la segunda roca generadora de hidrocarburos más importante de la cuenca.",
+                textureType: "shale"
+            },
+            {
+                num: 2,
+                id: "layer-2",
+                name: "Ciclo Precuyano (Fm. Lapa)",
+                badge: "Syn-Rift Volcánico",
+                color: "#a855f7", // Purple/Greenish
+                hexColor: 0x7e22ce,
+                height: 1.8,
+                depth: "4,300 - 4,800 m",
+                age: "Triásico Tardío - Jurásico Temprano (~200 Ma)",
+                litho: "Rocas volcanoclásicas, tobas y depósitos de foso rift",
+                content: "Tufitas, tobas volcánicas y trampas tectónicas complejas.",
+                desc: "Depósitos rellenados en las fosas tectónicas durante la rotura inicial del continente (fase de Syn-Rift) con intensa actividad volcánica.",
+                textureType: "volcanic"
+            },
+            {
+                num: 1,
+                id: "layer-1",
+                name: "Basamento Profundo (Gr. Choiyoi)",
+                badge: "Corteza Ígnea",
+                color: "#3f3f46", // Dark Granite
+                hexColor: 0x18181b,
+                height: 2.6,
+                depth: "> 4,800 m",
+                age: "Permo-Triásico (~250+ Ma)",
+                litho: "Granitos, andesitas y rocas metamórficas masivas",
+                content: "Roca de corteza rígida no porosa. Zócalo estructural de la cuenca.",
+                desc: "El basamento cristalino rígido e ígneo sobre el cual se desarrolló toda la Cuenca Neuquina. Sin porosidad para hidrocarburos.",
+                textureType: "granite"
+            }
+        ];
+
+        let scene, camera, renderer, controls;
+        let layerMeshes = [];
+        let selectedLayerIndex = 5; // Default selected Vaca Muerta
+        let isExploded = false;
+        let isCutaway = false;
+        let raycaster, mouse;
+
+        // Procedural Texture Generators
+        function generateProceduralTexture(type) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 512;
+            canvas.height = 512;
+            const ctx = canvas.getContext('2d');
+
+            if (type === 'surface') {
+                ctx.fillStyle = '#1e293b';
+                ctx.fillRect(0, 0, 512, 512);
+                for (let i = 0; i < 6000; i++) {
+                    ctx.fillStyle = Math.random() > 0.5 ? '#334155' : '#0f172a';
+                    ctx.fillRect(Math.random() * 512, Math.random() * 512, 3, 3);
+                }
+            } else if (type === 'redbeds') {
+                ctx.fillStyle = '#7f1d1d';
+                ctx.fillRect(0, 0, 512, 512);
+                for (let i = 0; i < 400; i++) {
+                    ctx.fillStyle = `rgba(239, 68, 68, ${Math.random() * 0.25})`;
+                    ctx.fillRect(0, Math.random() * 512, 512, Math.random() * 4 + 1);
+                }
+            } else if (type === 'evaporite') {
+                ctx.fillStyle = '#881337';
+                ctx.fillRect(0, 0, 512, 512);
+                for (let i = 0; i < 300; i++) {
+                    ctx.fillStyle = 'rgba(253, 224, 71, 0.2)';
+                    ctx.fillRect(Math.random() * 512, Math.random() * 512, 10, 2);
+                }
+            } else if (type === 'vacaMuerta') {
+                // Dark organic laminated shale
+                ctx.fillStyle = '#020617';
+                ctx.fillRect(0, 0, 512, 512);
+                for (let i = 0; i < 800; i++) {
+                    const y = Math.random() * 512;
+                    ctx.fillStyle = Math.random() > 0.3 ? 'rgba(56, 189, 248, 0.15)' : 'rgba(15, 23, 42, 0.8)';
+                    ctx.fillRect(0, y, 512, Math.random() * 2 + 0.5);
+                }
+            } else if (type === 'gypsum') {
+                ctx.fillStyle = '#e2e8f0';
+                ctx.fillRect(0, 0, 512, 512);
+                for (let i = 0; i < 2000; i++) {
+                    ctx.fillStyle = Math.random() > 0.5 ? '#cbd5e1' : '#ffffff';
+                    ctx.fillRect(Math.random() * 512, Math.random() * 512, 2, 2);
+                }
+            } else {
+                // Default stone/shale
+                ctx.fillStyle = '#1e293b';
+                ctx.fillRect(0, 0, 512, 512);
+                for (let i = 0; i < 3000; i++) {
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.05)';
+                    ctx.fillRect(Math.random() * 512, Math.random() * 512, 2, 2);
+                }
+            }
+
+            const texture = new THREE.CanvasTexture(canvas);
+            texture.wrapS = THREE.RepeatWrapping;
+            texture.wrapT = THREE.RepeatWrapping;
+            texture.repeat.set(2, 1);
+            return texture;
+        }
+
+        function initScene() {
+            const container = document.getElementById('canvas-container');
+
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x050811);
+            scene.fog = new THREE.FogExp2(0x050811, 0.015);
+
+            camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(32, 18, 36);
+
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            container.appendChild(renderer.domElement);
+
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            controls.maxPolarAngle = Math.PI / 2 + 0.05;
+            controls.minDistance = 15;
+            controls.maxDistance = 85;
+            controls.target.set(0, 0, 0);
+
+            // Lighting
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.75);
+            scene.add(ambientLight);
+
+            const sunLight = new THREE.DirectionalLight(0xfffaed, 1.1);
+            sunLight.position.set(20, 35, 20);
+            sunLight.castShadow = true;
+            sunLight.shadow.mapSize.width = 2048;
+            sunLight.shadow.mapSize.height = 2048;
+            scene.add(sunLight);
+
+            const blueAccentLight = new THREE.DirectionalLight(0x38bdf8, 0.6);
+            blueAccentLight.position.set(-20, -10, -20);
+            scene.add(blueAccentLight);
+
+            // Raycaster for clicking 3D layers
+            raycaster = new THREE.Raycaster();
+            mouse = new THREE.Vector2();
+
+            // Build 3D Block and UI
+            build3DGeologicalBlock();
+            renderSidebarList();
+            selectLayer(5); // Default Vaca Muerta
+
+            // Listeners
+            window.addEventListener('resize', onWindowResize);
+            renderer.domElement.addEventListener('pointerdown', onDocumentPointerDown);
+
+            animate();
+        }
+
+        function build3DGeologicalBlock() {
+            const blockWidth = 18;
+            const blockDepth = 18;
+
+            // Total height calculation
+            let currentY = -11; // Base starting point
+
+            geologicalLayersData.slice().reverse().forEach((data, revIdx) => {
+                const actualIndex = 10 - revIdx; // Original array index (0=Basamento, 10=Superficie)
+                
+                const texture = generateProceduralTexture(data.textureType);
+                const geom = new THREE.BoxGeometry(blockWidth, data.height, blockDepth, 16, 1, 16);
+
+                // Subtle noise in vertex positions for organic rock contact
+                const pos = geom.attributes.position;
+                for (let i = 0; i < pos.count; i++) {
+                    const x = pos.getX(i);
+                    const z = pos.getZ(i);
+                    const y = pos.getY(i);
+                    const wave = Math.sin(x * 0.3) * Math.cos(z * 0.3) * 0.15;
+                    pos.setY(i, y + wave);
+                }
+                geom.computeVertexNormals();
+
+                const mat = new THREE.MeshStandardMaterial({
+                    map: texture,
+                    color: new THREE.Color(data.hexColor),
+                    roughness: data.num === 6 ? 0.2 : 0.8, // Vaca Muerta extra sheen
+                    metalness: data.num === 6 ? 0.3 : 0.1,
+                    bumpMap: texture,
+                    bumpScale: 0.05
+                });
+
+                const mesh = new THREE.Mesh(geom, mat);
+                const centerY = currentY + data.height / 2;
+                mesh.position.set(0, centerY, 0);
+                mesh.castShadow = true;
+                mesh.receiveShadow = true;
+
+                // Save custom data
+                mesh.userData = {
+                    layerIndex: actualIndex,
+                    originalY: centerY,
+                    height: data.height,
+                    data: data
+                };
+
+                scene.add(mesh);
+                layerMeshes[actualIndex] = mesh;
+
+                currentY += data.height;
+            });
+        }
+
+        function renderSidebarList() {
+            const listContainer = document.getElementById('layers-list');
+            listContainer.innerHTML = '';
+
+            geologicalLayersData.forEach((layer, idx) => {
+                const item = document.createElement('div');
+                item.id = `sidebar-item-${idx}`;
+                item.className = `glass-item p-2.5 rounded-xl cursor-pointer flex items-center justify-between text-xs transition-all`;
+                item.onclick = () => selectLayer(idx);
+
+                item.innerHTML = `
+                    <div class="flex items-center space-x-2.5">
+                        <span class="w-5 h-5 rounded-full text-[10px] font-bold code-font flex items-center justify-center text-slate-900" style="background-color: ${layer.color}">
+                            ${layer.num}
+                        </span>
+                        <div>
+                            <div class="font-semibold text-slate-200 leading-tight">${layer.name}</div>
+                            <div class="text-[10px] text-slate-400 code-font">${layer.depth}</div>
+                        </div>
+                    </div>
+                    <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-slate-500"></i>
+                `;
+
+                listContainer.appendChild(item);
+            });
+            lucide.createIcons();
+        }
+
+        function selectLayer(index) {
+            selectedLayerIndex = index;
+            const data = geologicalLayersData[index];
+
+            // Update Sidebar UI active states
+            geologicalLayersData.forEach((_, i) => {
+                const el = document.getElementById(`sidebar-item-${i}`);
+                if (el) {
+                    if (i === index) {
+                        el.classList.add('active');
+                        if (i === 5) el.classList.add('glow-vaca-muerta');
+                    } else {
+                        el.classList.remove('active', 'glow-vaca-muerta');
+                    }
+                }
+            });
+
+            // Update Inspector Panel UI
+            document.getElementById('inspect-num').innerText = data.num;
+            document.getElementById('inspect-title').innerText = data.name;
+            document.getElementById('inspect-tag').innerText = data.badge;
+            document.getElementById('inspect-depth').innerText = data.depth;
+            document.getElementById('inspect-age').innerText = data.age;
+            document.getElementById('inspect-litho').innerText = data.litho;
+            document.getElementById('inspect-content').innerText = data.content;
+            document.getElementById('inspect-desc').innerText = data.desc;
+
+            // 3D Mesh Emissive Glow Highlight
+            layerMeshes.forEach((mesh, i) => {
+                if (mesh) {
+                    if (i === index) {
+                        mesh.material.emissive = new THREE.Color(0x38bdf8);
+                        mesh.material.emissiveIntensity = 0.4;
+                    } else {
+                        mesh.material.emissive = new THREE.Color(0x000000);
+                        mesh.material.emissiveIntensity = 0;
+                    }
+                }
+            });
+        }
+
+        function toggleExplodeView() {
+            isExploded = !isExploded;
+            const btn = document.getElementById('btn-explode');
+            btn.classList.toggle('active', isExploded);
+
+            const gapFactor = isExploded ? 0.8 : 0;
+
+            layerMeshes.forEach((mesh, idx) => {
+                const offset = (idx - 5) * gapFactor;
+                mesh.position.y = mesh.userData.originalY + offset;
+            });
+        }
+
+        function toggleCutaway() {
+            isCutaway = !isCutaway;
+            const btn = document.getElementById('btn-cutaway');
+            btn.classList.toggle('active', isCutaway);
+
+            layerMeshes.forEach((mesh) => {
+                if (isCutaway) {
+                    mesh.scale.x = 0.5;
+                    mesh.position.x = -4.5;
+                } else {
+                    mesh.scale.x = 1.0;
+                    mesh.position.x = 0;
+                }
+            });
+        }
+
+        function resetCamera() {
+            camera.position.set(32, 18, 36);
+            controls.target.set(0, 0, 0);
+            controls.update();
+        }
+
+        // Raycasting click detection on 3D meshes
+        function onDocumentPointerDown(event) {
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObjects(layerMeshes);
+
+            if (intersects.length > 0) {
+                const clickedMesh = intersects[0].object;
+                const layerIdx = clickedMesh.userData.layerIndex;
+                if (layerIdx !== undefined) {
+                    selectLayer(layerIdx);
+                }
+            }
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+
+            // Slow subtle rotation when idle
+            if (scene) {
+                scene.rotation.y += 0.0008;
+            }
+
+            renderer.render(scene, camera);
+        }
+
+        window.onload = () => {
+            initScene();
+        };
+    </script>
+</body>
+</html>
