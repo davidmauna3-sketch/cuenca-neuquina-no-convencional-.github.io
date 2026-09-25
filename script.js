@@ -1,27 +1,46 @@
 document.addEventListener('DOMContentLoaded',()=>{
 
-  setTimeout(()=>document.body.classList.add('loaded'),500);
+  setTimeout(()=>{
+    document.body.classList.add('loaded');
+  },500);
 
-  const $=s=>document.querySelector(s),
-        $$=s=>document.querySelectorAll(s);
+  const $=s=>document.querySelector(s);
+  const $$=s=>document.querySelectorAll(s);
+
+  /* =====================================================
+     AÑO
+  ===================================================== */
 
   $('#year').textContent=new Date().getFullYear();
 
 
-  const menu=$('#menuBtn'),
-        nav=$('#nav');
+  /* =====================================================
+     MENÚ
+  ===================================================== */
 
-  if(menu)
-    menu.onclick=()=>nav.classList.toggle('open');
+  const menu=$('#menuBtn');
+  const nav=$('#nav');
 
-  $$('#nav a').forEach(a=>
-    a.onclick=()=>nav.classList.remove('open')
-  );
+  if(menu){
+    menu.onclick=()=>{
+      nav.classList.toggle('open');
+    };
+  }
 
+  $$('#nav a').forEach(a=>{
+    a.onclick=()=>{
+      nav.classList.remove('open');
+    };
+  });
+
+
+  /* =====================================================
+     MODO PRESENTACIÓN
+  ===================================================== */
 
   const stand=$('#standBtn');
 
-  if(stand)
+  if(stand){
 
     stand.onclick=()=>{
 
@@ -29,140 +48,47 @@ document.addEventListener('DOMContentLoaded',()=>{
 
       stand.textContent=
         document.body.classList.contains('stand-mode')
-        ?'Salir del modo presentación'
-        :'Modo presentación';
+        ? 'Salir del modo presentación'
+        : 'Modo presentación';
 
     };
-
-
-  const timeData={
-
-    tri:{
-      label:'TRIÁSICO–JURÁSICO',
-      title:'Se construye el espacio de la cuenca',
-      text:'La evolución tectónica genera el espacio de acomodación donde se acumularán sedimentos durante millones de años.',
-      age:'≈ 250–145 Ma',
-      event:'Evolución tectónica y sedimentaria',
-      stage:'stage-tri'
-    },
-
-    tit:{
-      label:'TITHONIANO',
-      title:'Avanza la inundación marina y se preserva materia orgánica',
-      text:'Durante el Tithoniano se desarrolla un importante registro marino fino y rico en materia orgánica asociado al sistema Vaca Muerta–Quintuco.',
-      age:'≈ 152–145 Ma',
-      event:'Sedimentación marina',
-      stage:'stage-tit'
-    },
-
-    ber:{
-      label:'BERRIASIANO',
-      title:'Continúa la evolución del sistema Vaca Muerta–Quintuco',
-      text:'La sedimentación continúa durante el Cretácico temprano y cambia lateral y verticalmente según el ambiente dentro de la cuenca.',
-      age:'≈ 145–139.8 Ma',
-      event:'Evolución sedimentaria',
-      stage:'stage-ber'
-    },
-
-    val:{
-      label:'VALANGINIANO',
-      title:'La arquitectura sedimentaria sigue evolucionando',
-      text:'El sistema continúa su evolución y se desarrollan unidades más jóvenes que cubren y suceden al registro Vaca Muerta en distintos sectores.',
-      age:'≈ 139.8–132.6 Ma',
-      event:'Progradación y cambio ambiental',
-      stage:'stage-val'
-    },
-
-    act:{
-      label:'ACTUALIDAD',
-      title:'La geología se convierte en ingeniería',
-      text:'Hoy el desarrollo no convencional combina pozos horizontales y estimulación hidráulica para aumentar la conectividad de formaciones de muy baja permeabilidad.',
-      age:'Actualidad',
-      event:'Desarrollo no convencional',
-      stage:'stage-act'
-    }
-
-  };
-
-
-  function setTime(key){
-
-    const d=timeData[key];
-
-    if(!d)
-      return;
-
-    $$('#timeTabs button')
-      .forEach(b=>
-        b.classList.toggle(
-          'active',
-          b.dataset.time===key
-        )
-      );
-
-    const scene=$('#geoScene');
-
-    scene.className='geo-scene '+d.stage;
-
-    $('#timeLabel').textContent=d.label;
-    $('#timeTitle').textContent=d.title;
-    $('#timeText').textContent=d.text;
-    $('#timeAge').textContent=d.age;
-    $('#timeEvent').textContent=d.event;
 
   }
 
 
-  $$('#timeTabs button')
-    .forEach(b=>
-      b.onclick=()=>setTime(b.dataset.time)
-    );
+  /* =====================================================
+     MAPA INTERACTIVO
+  ===================================================== */
 
-  setTime('tri');
+  if(window.L && $('#basinMap')){
 
-
-  if(window.L&&$('#basinMap')){
-
-    const map=L.map(
-      'basinMap',
-      {
-        zoomControl:true,
-        scrollWheelZoom:false,
-        minZoom:5,
-        maxZoom:12
-      }
-    ).setView(
-      [-38.35,-69.55],
-      6
-    );
+    const map=L.map('basinMap',{
+      zoomControl:true,
+      scrollWheelZoom:false,
+      minZoom:5,
+      maxZoom:12
+    }).setView([-38.35,-69.55],6);
 
 
     const standard=L.tileLayer(
-
       'https://wms.ign.gob.ar/geoserver/gwc/service/tms/1.0.0/capabaseargenmap@EPSG:3857@png/{z}/{x}/{-y}.png',
-
       {
         maxZoom:18,
         attribution:'© IGN · Argenmap'
       }
-
     ).addTo(map);
 
 
     const satellite=L.tileLayer(
-
       'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-
       {
         maxZoom:19,
         attribution:'Tiles © Esri'
       }
-
     );
 
 
     const basinCoords=[
-
       [-35.10,-70.25],
       [-35.25,-69.25],
       [-35.65,-67.85],
@@ -178,12 +104,10 @@ document.addEventListener('DOMContentLoaded',()=>{
       [-37.45,-71.55],
       [-36.55,-70.95],
       [-35.65,-70.65]
-
     ];
 
 
     const vacaCoords=[
-
       [-35.95,-70.05],
       [-36.10,-69.35],
       [-36.45,-68.72],
@@ -197,14 +121,11 @@ document.addEventListener('DOMContentLoaded',()=>{
       [-37.90,-70.82],
       [-37.20,-70.72],
       [-36.55,-70.45]
-
     ];
 
 
     const basin=L.polygon(
-
       basinCoords,
-
       {
         color:'#9d7dff',
         weight:2,
@@ -212,95 +133,94 @@ document.addEventListener('DOMContentLoaded',()=>{
         fillColor:'#9d7dff',
         fillOpacity:.09
       }
-
     ).addTo(map);
 
 
-    basin.bindPopup(
+    basin.bindPopup(`
+      <div class="map-popup-title">
+        Cuenca Neuquina
+      </div>
 
-      '<div class="map-popup-title">Cuenca Neuquina</div>'+
-      '<div class="map-popup-desc">Límite esquemático utilizado con fines educativos.</div>'
-
-    );
+      <div class="map-popup-desc">
+        Límite esquemático utilizado con fines educativos.
+      </div>
+    `);
 
 
     const vaca=L.polygon(
-
       vacaCoords,
-
       {
         color:'#ff9a3d',
         weight:2,
         fillColor:'#ff9a3d',
         fillOpacity:.25
       }
-
     ).addTo(map);
 
 
-    vaca.bindPopup(
+    vaca.bindPopup(`
+      <div class="map-popup-title">
+        Vaca Muerta
+      </div>
 
-      '<div class="map-popup-title">Vaca Muerta</div>'+
-      '<div class="map-popup-desc">Área de referencia visual. No representa un límite oficial de la formación.</div>'
-
-    );
+      <div class="map-popup-desc">
+        Área de referencia visual. No representa un límite oficial de la formación.
+      </div>
+    `);
 
 
     const points=[
-
       [
         'Añelo',
         -38.355,
         -68.789,
         'Centro estratégico del desarrollo no convencional'
       ],
-
       [
         'Loma Campana',
         -38.09,
         -69.04,
         'Área emblemática de Vaca Muerta'
       ],
-
       [
         'Rincón de los Sauces',
         -37.39,
         -68.92,
         'Nodo hidrocarburífero de la región'
       ],
-
       [
         'Malargüe',
         -35.47,
         -69.59,
         'Sector mendocino de la Cuenca Neuquina'
       ]
-
     ];
 
 
-    const pointLayer=L.layerGroup()
-      .addTo(map);
+    const pointLayer=L.layerGroup().addTo(map);
 
 
     points.forEach(p=>{
 
       const icon=L.divIcon({
-
         className:'custom-marker',
 
-        html:
-          '<span style="' +
-          'display:block;' +
-          'width:10px;' +
-          'height:10px;' +
-          'border-radius:50%;' +
-          'background:#68d89a;' +
-          'box-shadow:0 0 0 5px #68d89a22,0 0 15px #68d89a88' +
-          '"></span>',
+        html:`
+          <span
+            style="
+              display:block;
+              width:10px;
+              height:10px;
+              border-radius:50%;
+              background:#68d89a;
+              box-shadow:
+              0 0 0 5px #68d89a22,
+              0 0 15px #68d89a88;
+            ">
+          </span>
+        `,
 
         iconSize:[10,10]
-
       });
 
 
@@ -309,34 +229,27 @@ document.addEventListener('DOMContentLoaded',()=>{
         {icon}
       )
       .addTo(pointLayer)
-      .bindPopup(
+      .bindPopup(`
+        <div class="map-popup-title">
+          ${p[0]}
+        </div>
 
-        '<div class="map-popup-title">'+
-        p[0]+
-        '</div>'+
-
-        '<div class="map-popup-desc">'+
-        p[3]+
-        '</div>'
-
-      );
+        <div class="map-popup-desc">
+          ${p[3]}
+        </div>
+      `);
 
     });
 
 
-    const bounds=
-      L.latLngBounds(basinCoords),
-
-      vBounds=
-      L.latLngBounds(vacaCoords);
+    const bounds=L.latLngBounds(basinCoords);
+    const vBounds=L.latLngBounds(vacaCoords);
 
 
     const setBtn=b=>{
 
       $$('.map-action')
-        .forEach(x=>
-          x.classList.remove('active')
-        );
+      .forEach(x=>x.classList.remove('active'));
 
       b.classList.add('active');
 
@@ -389,9 +302,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 
         $('#satBtn').textContent='◉ Mapa';
 
-      }
-
-      else{
+      }else{
 
         map.removeLayer(satellite);
 
@@ -404,18 +315,16 @@ document.addEventListener('DOMContentLoaded',()=>{
     };
 
 
-    $('#basinMap')
-      .addEventListener(
-        'mouseenter',
-        ()=>map.scrollWheelZoom.enable()
-      );
+    $('#basinMap').addEventListener(
+      'mouseenter',
+      ()=>map.scrollWheelZoom.enable()
+    );
 
 
-    $('#basinMap')
-      .addEventListener(
-        'mouseleave',
-        ()=>map.scrollWheelZoom.disable()
-      );
+    $('#basinMap').addEventListener(
+      'mouseleave',
+      ()=>map.scrollWheelZoom.disable()
+    );
 
 
     setTimeout(()=>{
@@ -430,6 +339,10 @@ document.addEventListener('DOMContentLoaded',()=>{
 
   }
 
+
+  /* =====================================================
+     DESARROLLO DEL POZO
+  ===================================================== */
 
   const process=[
 
@@ -477,16 +390,17 @@ document.addEventListener('DOMContentLoaded',()=>{
     const d=process[i];
 
     $$('.process-step')
-      .forEach((b,j)=>
+      .forEach((b,j)=>{
         b.classList.toggle(
           'active',
           i===j
-        )
-      );
+        );
+      });
+
 
     $('#processNumber').textContent=
-      'ETAPA '+
-      String(i+1).padStart(2,'0');
+      'ETAPA '+String(i+1).padStart(2,'0');
+
 
     $('#processTitle').textContent=d[0];
 
@@ -494,58 +408,65 @@ document.addEventListener('DOMContentLoaded',()=>{
 
     $('#processTip').textContent=d[2];
 
+
     $('.well-line-h').style.width=
       (55+i*5)+'%';
 
-    $$('.frac')
-      .forEach((f,j)=>
-        f.style.opacity=
-          i>=4
-          ?String(.35+j*.12)
-          :i>=2
-          ?'0.55'
-          :'0.12'
-      );
+
+    $$('.frac').forEach((f,j)=>{
+
+      f.style.opacity=
+        i>=4
+        ? String(.35+j*.12)
+        : i>=2
+        ? '0.55'
+        : '0.12';
+
+    });
 
   }
 
 
   $$('.process-step')
-    .forEach(b=>
-      b.onclick=()=>
-        setProcess(
-          +b.dataset.step
-        )
-    );
+    .forEach(b=>{
+      b.onclick=()=>{
+        setProcess(+b.dataset.step);
+      };
+    });
 
 
   setProcess(0);
 
 
-  const depth=$('#depth'),
-        length=$('#length'),
-        stages=$('#stages');
+  /* =====================================================
+     SIMULADOR
+  ===================================================== */
+
+  const depth=$('#depth');
+  const length=$('#length');
+  const stages=$('#stages');
 
 
   function sim(){
 
-    const d=+depth.value,
-          l=+length.value,
-          s=+stages.value;
+    const d=+depth.value;
+    const l=+length.value;
+    const s=+stages.value;
 
 
     $('#depthValue').textContent=
       d+' m';
 
+
     $('#lengthValue').textContent=
       l+' m';
+
 
     $('#stagesValue').textContent=
       s;
 
 
     let score=Math.round(
-
       Math.min(
         100,
         Math.max(
@@ -555,7 +476,6 @@ document.addEventListener('DOMContentLoaded',()=>{
           (s-5)/35*20
         )
       )
-
     );
 
 
@@ -568,16 +488,11 @@ document.addEventListener('DOMContentLoaded',()=>{
 
 
     $('#simText').textContent=
-
       score>78
-
-      ?'Alto contacto conceptual con la formación objetivo.'
-
-      :score>58
-
-      ?'Buen contacto conceptual con la formación objetivo.'
-
-      :'Contacto conceptual reducido: aumentá la longitud horizontal o las etapas.';
+      ? 'Alto contacto conceptual con la formación objetivo.'
+      : score>58
+      ? 'Buen contacto conceptual con la formación objetivo.'
+      : 'Contacto conceptual reducido: aumentá la longitud horizontal o las etapas.';
 
 
     const y=
@@ -601,45 +516,46 @@ document.addEventListener('DOMContentLoaded',()=>{
 
 
     $('.sim-fracs').style.background=
-
       'repeating-linear-gradient('+
       '110deg,'+
       'transparent 0 '+
-      (28-n/2)+
-      'px,#a98cff88 '+
-      (29-n/2)+
-      'px '+
-      (31-n/2)+
-      'px)';
+      (28-n/2)+'px,'+
+      '#a98cff88 '+
+      (29-n/2)+'px '+
+      (31-n/2)+'px)';
 
   }
 
 
   [depth,length,stages]
-    .forEach(x=>
-      x.oninput=sim
-    );
+    .forEach(x=>{
+      x.oninput=sim;
+    });
 
 
   sim();
 
 
+  /* =====================================================
+     CONTADORES
+  ===================================================== */
+
   const counters=
     $$('[data-counter]');
+
 
   let counted=false;
 
 
   function runCounters(){
 
-    if(counted)
-      return;
+    if(counted)return;
 
-    const box=
-      $('.number-grid');
 
-    if(!box)
-      return;
+    const box=$('.number-grid');
+
+    if(!box)return;
+
 
     const r=
       box.getBoundingClientRect();
@@ -655,6 +571,7 @@ document.addEventListener('DOMContentLoaded',()=>{
         const target=
           +el.dataset.counter;
 
+
         let n=0;
 
 
@@ -668,11 +585,11 @@ document.addEventListener('DOMContentLoaded',()=>{
         const timer=
           setInterval(()=>{
 
-            n=
-              Math.min(
-                target,
-                n+step
-              );
+            n=Math.min(
+              target,
+              n+step
+            );
+
 
             el.textContent=n;
 
@@ -694,8 +611,13 @@ document.addEventListener('DOMContentLoaded',()=>{
     runCounters
   );
 
+
   runCounters();
 
+
+  /* =====================================================
+     QUIZ
+  ===================================================== */
 
   const questions=[
 
@@ -790,27 +712,24 @@ document.addEventListener('DOMContentLoaded',()=>{
   ];
 
 
-  let qi=0,
-      score=0,
-      answered=false;
+  let qi=0;
+  let score=0;
+  let answered=false;
 
 
   function renderQuiz(){
 
-    const q=
-      questions[qi];
+    const q=questions[qi];
 
 
     $('#qNumber').textContent=
-      'Pregunta '+
-      (qi+1)+
+      'Pregunta '+(qi+1)+
       ' de '+
       questions.length;
 
 
     $('#score').textContent=
-      score+
-      ' pts';
+      score+' pts';
 
 
     $('#question').textContent=
@@ -818,9 +737,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 
 
     $('#quizProgress').style.width=
-      ((qi+1)/
-      questions.length*
-      100)+'%';
+      ((qi+1)/questions.length*100)+'%';
 
 
     $('#result').textContent='';
@@ -850,17 +767,16 @@ document.addEventListener('DOMContentLoaded',()=>{
 
       b.onclick=()=>{
 
-        if(answered)
-          return;
+        if(answered)return;
 
 
         answered=true;
 
 
         $$('.answer')
-          .forEach(x=>
-            x.disabled=true
-          );
+          .forEach(x=>{
+            x.disabled=true;
+          });
 
 
         if(i===q[2]){
@@ -872,9 +788,7 @@ document.addEventListener('DOMContentLoaded',()=>{
           $('#result').textContent=
             '✓ Correcto';
 
-        }
-
-        else{
+        }else{
 
           b.classList.add('wrong');
 
@@ -888,8 +802,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 
 
         $('#score').textContent=
-          score+
-          ' pts';
+          score+' pts';
 
 
         $('#next').disabled=false;
@@ -909,8 +822,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 
   $('#next').onclick=()=>{
 
-    if(!answered)
-      return;
+    if(!answered)return;
 
 
     qi++;
@@ -933,16 +845,11 @@ document.addEventListener('DOMContentLoaded',()=>{
 
 
       $('#result').textContent=
-
         score>=7
-
-        ?'Excelente: dominás los conceptos principales.'
-
-        :score>=5
-
-        ?'Muy bien: tenés una buena base.'
-
-        :'Buen comienzo: recorré nuevamente la página y probá otra vez.';
+        ? 'Excelente: dominás los conceptos principales.'
+        : score>=5
+        ? 'Muy bien: tenés una buena base.'
+        : 'Buen comienzo: recorré nuevamente la página y probá otra vez.';
 
 
       $('#next').textContent=
@@ -952,7 +859,6 @@ document.addEventListener('DOMContentLoaded',()=>{
       $('#next').onclick=()=>{
 
         qi=0;
-
         score=0;
 
         $('#next').textContent=
@@ -961,7 +867,6 @@ document.addEventListener('DOMContentLoaded',()=>{
         renderQuiz();
 
       };
-
 
       return;
 
@@ -975,6 +880,10 @@ document.addEventListener('DOMContentLoaded',()=>{
 
   renderQuiz();
 
+
+  /* =====================================================
+     GLOSARIO
+  ===================================================== */
 
   const glossary={
 
@@ -1000,15 +909,15 @@ document.addEventListener('DOMContentLoaded',()=>{
 
 
   $$('.glossary button')
-    .forEach(b=>
+    .forEach(b=>{
 
-      b.onclick=()=>
+      b.onclick=()=>{
 
         $('#glossaryAnswer').textContent=
-          glossary[
-            b.dataset.term
-          ]
+          glossary[b.dataset.term];
 
-    );
+      };
+
+    });
 
 });
